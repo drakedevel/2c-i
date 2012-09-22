@@ -7,7 +7,7 @@
   * @brief     STM32F4xx Devices vector table for RIDE7 toolchain. 
   *            This module performs:
   *                - Set the initial SP
-  *                - Set the initial PC == Reset_Handler,
+  *                - Set the initial PC == __cs3_reset_cortex_m,
   *                - Set the vector table entries with the exceptions ISR address
   *                - Configure the clock system and the external SRAM mounted on 
   *                  STM324xG-EVAL board to be used as data memory (optional, 
@@ -41,14 +41,14 @@
   .fpu softvfp
   .thumb
 
-.global  g_pfnVectors
+.global  __cs3_interrupt_vector_cortex_m
 .global  Default_Handler
 
 /* start address for the initialization values of the .data section. 
 defined in linker script */
-.word  _sidata
+.word  __cs3_region_init_ram
 /* start address for the .data section. defined in linker script */  
-.word  _sdata
+.word  __cs3_region_start_ram
 /* end address for the .data section. defined in linker script */
 .word  _edata
 /* start address for the .bss section. defined in linker script */
@@ -66,23 +66,23 @@ defined in linker script */
  * @retval : None
 */
 
-    .section  .text.Reset_Handler
-  .weak  Reset_Handler
-  .type  Reset_Handler, %function
-Reset_Handler:  
+    .section  .text.__cs3_reset_cortex_m
+  .weak  __cs3_reset_cortex_m
+  .type  __cs3_reset_cortex_m, %function
+__cs3_reset_cortex_m:  
 
 /* Copy the data segment initializers from flash to SRAM */  
   movs  r1, #0
   b  LoopCopyDataInit
 
 CopyDataInit:
-  ldr  r3, =_sidata
+  ldr  r3, =__cs3_region_init_ram
   ldr  r3, [r3, r1]
   str  r3, [r0, r1]
   adds  r1, r1, #4
     
 LoopCopyDataInit:
-  ldr  r0, =_sdata
+  ldr  r0, =__cs3_region_start_ram
   ldr  r3, =_edata
   adds  r2, r0, r1
   cmp  r2, r3
@@ -99,12 +99,10 @@ LoopFillZerobss:
   cmp  r2, r3
   bcc  FillZerobss
 
-/* Call the clock system intitialization function.*/
-  bl  SystemInit   
 /* Call the application's entry point.*/
   bl  main
   bx  lr    
-.size  Reset_Handler, .-Reset_Handler
+.size  __cs3_reset_cortex_m, .-__cs3_reset_cortex_m
 
 /**
  * @brief  This is the code that gets called when the processor receives an 
@@ -126,13 +124,13 @@ Infinite_Loop:
 * 
 *******************************************************************************/
    .section  .isr_vector,"a",%progbits
-  .type  g_pfnVectors, %object
-  .size  g_pfnVectors, .-g_pfnVectors
+  .type  __cs3_interrupt_vector_cortex_m, %object
+  .size  __cs3_interrupt_vector_cortex_m, .-__cs3_interrupt_vector_cortex_m
     
     
-g_pfnVectors:
-  .word  _estack
-  .word  Reset_Handler
+__cs3_interrupt_vector_cortex_m:
+  .word  __cs3_stack
+  .word  __cs3_reset_cortex_m
   .word  NMI_Handler
   .word  HardFault_Handler
   .word  MemManage_Handler
