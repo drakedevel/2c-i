@@ -128,7 +128,7 @@ USBD_Status  USBD_StdItfReq (USB_OTG_CORE_HANDLE  *pdev, USB_SETUP_REQ  *req)
     
     if (LOBYTE(req->wIndex) <= USBD_ITF_MAX_NUM) 
     {
-      pdev->dev.class_cb->Setup (pdev, req); 
+      USB_Class_Setup (pdev, req); 
       
       if((req->wLength == 0)&& (ret == USBD_OK))
       {
@@ -186,7 +186,7 @@ USBD_Status  USBD_StdEPReq (USB_OTG_CORE_HANDLE  *pdev, USB_SETUP_REQ  *req)
           
         }
       }
-      pdev->dev.class_cb->Setup (pdev, req);   
+      USB_Class_Setup (pdev, req);   
       USBD_CtlSendStatus(pdev);
       
       break;
@@ -214,7 +214,7 @@ USBD_Status  USBD_StdEPReq (USB_OTG_CORE_HANDLE  *pdev, USB_SETUP_REQ  *req)
         if ((ep_addr != 0x00) && (ep_addr != 0x80)) 
         {        
           DCD_EP_ClrStall(pdev , ep_addr);
-          pdev->dev.class_cb->Setup (pdev, req);
+          USB_Class_Setup (pdev, req);
         }
         USBD_CtlSendStatus(pdev);
       }
@@ -303,12 +303,12 @@ static void USBD_GetDescriptor(USB_OTG_CORE_HANDLE  *pdev,
     break;
     
   case USB_DESC_TYPE_CONFIGURATION:
-      pbuf   = (uint8_t *)pdev->dev.class_cb->GetConfigDescriptor(pdev->cfg.speed, &len);
+      pbuf   = (uint8_t *)USB_Class_GetConfigDescriptor(pdev->cfg.speed, &len);
 #ifdef USB_OTG_HS_CORE
     if((pdev->cfg.speed == USB_OTG_SPEED_FULL )&&
        (pdev->cfg.phy_itface  == USB_OTG_ULPI_PHY))
     {
-      pbuf   = (uint8_t *)pdev->dev.class_cb->GetOtherConfigDescriptor(pdev->cfg.speed, &len);
+      pbuf   = (uint8_t *)USB_Class_GetOtherConfigDescriptor(pdev->cfg.speed, &len);
     }
 #endif  
     pbuf[1] = USB_DESC_TYPE_CONFIGURATION;
@@ -344,7 +344,7 @@ static void USBD_GetDescriptor(USB_OTG_CORE_HANDLE  *pdev,
       
     default:
 #ifdef USB_SUPPORT_USER_STRING_DESC
-      pbuf = pdev->dev.class_cb->GetUsrStrDescriptor(pdev->cfg.speed, (req->wValue) , &len);
+      pbuf = USB_Class_GetUsrStrDescriptor(pdev->cfg.speed, (req->wValue) , &len);
       break;
 #else      
        USBD_CtlError(pdev , req);
@@ -357,7 +357,7 @@ static void USBD_GetDescriptor(USB_OTG_CORE_HANDLE  *pdev,
     if(pdev->cfg.speed == USB_OTG_SPEED_HIGH  )   
     {
       
-      pbuf   = (uint8_t *)pdev->dev.class_cb->GetConfigDescriptor(pdev->cfg.speed, &len);
+      pbuf   = (uint8_t *)USB_Class_GetConfigDescriptor(pdev->cfg.speed, &len);
             
       USBD_DeviceQualifierDesc[4]= pbuf[14];
       USBD_DeviceQualifierDesc[5]= pbuf[15];
@@ -382,7 +382,7 @@ static void USBD_GetDescriptor(USB_OTG_CORE_HANDLE  *pdev,
 
     if(pdev->cfg.speed == USB_OTG_SPEED_HIGH  )   
     {
-      pbuf   = (uint8_t *)pdev->dev.class_cb->GetOtherConfigDescriptor(pdev->cfg.speed, &len);
+      pbuf   = (uint8_t *)USB_Class_GetOtherConfigDescriptor(pdev->cfg.speed, &len);
       pbuf[1] = USB_DESC_TYPE_OTHER_SPEED_CONFIGURATION;
       break; 
     }
@@ -622,7 +622,7 @@ static void USBD_SetFeature(USB_OTG_CORE_HANDLE  *pdev,
   if (req->wValue == USB_FEATURE_REMOTE_WAKEUP)
   {
     pdev->dev.DevRemoteWakeup = 1;  
-    pdev->dev.class_cb->Setup (pdev, req);   
+    USB_Class_Setup (pdev, req);   
     USBD_CtlSendStatus(pdev);
   }
 
@@ -679,7 +679,7 @@ static void USBD_ClrFeature(USB_OTG_CORE_HANDLE  *pdev,
     if (req->wValue == USB_FEATURE_REMOTE_WAKEUP) 
     {
       pdev->dev.DevRemoteWakeup = 0; 
-      pdev->dev.class_cb->Setup (pdev, req);   
+      USB_Class_Setup (pdev, req);   
       USBD_CtlSendStatus(pdev);
     }
     break;

@@ -162,45 +162,27 @@ typedef  struct  usb_setup_req {
     uint16_t  wLength;                            
 } USB_SETUP_REQ;
 
-typedef struct _Device_cb
-{
-  uint8_t  (*Init)         (void *pdev , uint8_t cfgidx);
-  uint8_t  (*DeInit)       (void *pdev , uint8_t cfgidx);
- /* Control Endpoints*/
-  uint8_t  (*Setup)        (void *pdev , USB_SETUP_REQ  *req);  
-  uint8_t  (*EP0_TxSent)   (void *pdev );    
-  uint8_t  (*EP0_RxReady)  (void *pdev );  
-  /* Class Specific Endpoints*/
-  uint8_t  (*DataIn)       (void *pdev , uint8_t epnum);   
-  uint8_t  (*DataOut)      (void *pdev , uint8_t epnum); 
-  uint8_t  (*SOF)          (void *pdev); 
-  uint8_t  (*IsoINIncomplete)  (void *pdev); 
-  uint8_t  (*IsoOUTIncomplete)  (void *pdev);   
+uint8_t USB_Class_Init(void *pdev , uint8_t cfgidx);
+uint8_t USB_Class_DeInit(void *pdev , uint8_t cfgidx);
+uint8_t USB_Class_Setup(void *pdev, USB_SETUP_REQ *req);
+uint8_t USB_Class_EP0_TxSent(void *pdev);
+uint8_t USB_Class_EP0_RxReady(void *pdev);
+uint8_t USB_Class_DataIn(void *pdev, uint8_t epnum);
+uint8_t USB_Class_DataOut(void *pdev, uint8_t epnum);
+uint8_t USB_Class_SOF(void *pdev);
+uint8_t USB_Class_IsoINIncomplete(void *pdev);
+uint8_t USB_Class_IsoOUTIncomplete(void *pdev);
+uint8_t *USB_Class_GetConfigDescriptor( uint8_t speed , uint16_t *length); 
+uint8_t *USB_Class_GetOtherConfigDescriptor( uint8_t speed , uint16_t *length); 
+uint8_t *USB_Class_GetUserStrDescriptor( uint8_t speed ,uint8_t index,  uint16_t *length);
 
-  uint8_t  *(*GetConfigDescriptor)( uint8_t speed , uint16_t *length); 
-#ifdef USB_OTG_HS_CORE 
-  uint8_t  *(*GetOtherConfigDescriptor)( uint8_t speed , uint16_t *length);   
-#endif
-
-#ifdef USB_SUPPORT_USER_STRING_DESC 
-  uint8_t  *(*GetUsrStrDescriptor)( uint8_t speed ,uint8_t index,  uint16_t *length);   
-#endif  
-  
-} USBD_Class_cb_TypeDef;
-
-typedef struct _USBD_USR_PROP
-{
-  void (*Init)(void);   
-  void (*DeviceReset)(uint8_t speed); 
-  void (*DeviceConfigured)(void);
-  void (*DeviceSuspended)(void);
-  void (*DeviceResumed)(void);  
-  
-  void (*DeviceConnected)(void);  
-  void (*DeviceDisconnected)(void);    
-  
-}
-USBD_Usr_cb_TypeDef;
+void USBD_USR_Init(void);
+void USBD_USR_DeviceReset(uint8_t speed);
+void USBD_USR_DeviceConfigured (void); 
+void USBD_USR_DeviceSuspended(void);
+void USBD_USR_DeviceResumed(void);
+void USBD_USR_DeviceConnected (void);
+void USBD_USR_DeviceDisconnected (void);
 
 typedef struct _DCD
 {
@@ -215,9 +197,7 @@ typedef struct _DCD
   USB_OTG_EP     in_ep   [USB_OTG_MAX_TX_FIFOS];
   USB_OTG_EP     out_ep  [USB_OTG_MAX_TX_FIFOS];
   uint8_t        setup_packet [8*3];
-  USBD_Class_cb_TypeDef         *class_cb;
-  USBD_Usr_cb_TypeDef           *usr_cb;
-  //USBD_DEVICE                   *usr_device;  
+//  USBD_Class_cb_TypeDef         *class_cb;
   uint8_t        *pConfig_descriptor;
  }
 DCD_DEV , *DCD_PDEV;

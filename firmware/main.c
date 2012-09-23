@@ -40,10 +40,6 @@
 
 USB_OTG_CORE_HANDLE           USB_OTG_dev;
 
-void SysTick_Handler(void) {
-STM_EVAL_LEDToggle(LED4);
-}
-
 int main(void)
 {
   __IO uint32_t i = 0;
@@ -58,10 +54,7 @@ int main(void)
   STM_EVAL_LEDOn(LED3);
   STM_EVAL_LEDOn(LED4);
 
-  USBD_Init(&USB_OTG_dev,
-            USB_OTG_FS_CORE_ID,
-            &AUDIO_cb, 
-            &USR_cb);
+  USBD_Init(&USB_OTG_dev, USB_OTG_FS_CORE_ID);
 
   /* Setup SysTick Timer for 10 msec interrupts 
      This interrupt is used to display the current state of the Audio Player and
@@ -75,10 +68,8 @@ int main(void)
   /* Main loop */
   while (1)
   {    
-    if (i++ == 0x100000) STM_EVAL_LEDToggle(LED1);
-    else if (i == 0x200000) STM_EVAL_LEDToggle(LED2);
-    else if (i == 0x300000)  {
-      STM_EVAL_LEDToggle(LED3);
+    if (i++ == 0x100000) {
+      STM_EVAL_LEDToggle(LED1);
       i = 0;
     }
   }

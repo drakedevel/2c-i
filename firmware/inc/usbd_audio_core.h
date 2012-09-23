@@ -135,30 +135,4 @@ typedef struct _Audio_Fops
   * @}
   */ 
 
-/** @defgroup USBD_CORE_Exported_Variables
-  * @{
-  */ 
-
-extern USBD_Class_cb_TypeDef  AUDIO_cb;
-
-/**
-  * @}
-  */ 
-
-/** @defgroup USB_CORE_Exported_Functions
-  * @{
-  */
-/**
-  * @}
-  */ 
-
 #endif  // __USB_AUDIO_CORE_H_
-/**
-  * @}
-  */ 
-
-/**
-  * @}
-  */ 
-  
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -82,23 +82,10 @@
 #include "usbd_audio_out_if.h"
 
 /*********************************************
-   AUDIO Device library callbacks
- *********************************************/
-static uint8_t  usbd_audio_Init       (void  *pdev, uint8_t cfgidx);
-static uint8_t  usbd_audio_DeInit     (void  *pdev, uint8_t cfgidx);
-static uint8_t  usbd_audio_Setup      (void  *pdev, USB_SETUP_REQ *req);
-static uint8_t  usbd_audio_EP0_RxReady(void *pdev);
-static uint8_t  usbd_audio_DataIn     (void *pdev, uint8_t epnum);
-static uint8_t  usbd_audio_DataOut    (void *pdev, uint8_t epnum);
-static uint8_t  usbd_audio_SOF        (void *pdev);
-static uint8_t  usbd_audio_OUT_Incplt (void  *pdev);
-
-/*********************************************
    AUDIO Requests management functions
  *********************************************/
 static void AUDIO_Req_GetCurrent(void *pdev, USB_SETUP_REQ *req);
 static void AUDIO_Req_SetCurrent(void *pdev, USB_SETUP_REQ *req);
-static uint8_t  *USBD_audio_GetCfgDesc (uint8_t speed, uint16_t *length);
 /**
   * @}
   */ 
@@ -122,24 +109,24 @@ static uint32_t PlayFlag = 0;
 static __IO uint32_t  usbd_audio_AltSet = 0;
 static uint8_t usbd_audio_CfgDesc[AUDIO_CONFIG_DESC_SIZE];
 
+#if 0
 /* AUDIO interface class callbacks structure */
 USBD_Class_cb_TypeDef  AUDIO_cb = 
 {
-  usbd_audio_Init,
-  usbd_audio_DeInit,
-  usbd_audio_Setup,
+  USB_Class_Init,
+  USB_Class_DeInit,
+  USB_Class_Setup,
   NULL, /* EP0_TxSent */
-  usbd_audio_EP0_RxReady,
-  usbd_audio_DataIn,
-  usbd_audio_DataOut,
-  usbd_audio_SOF,
+  USB_Class_EP0_RxReady,
+  USB_Class_DataIn,
+  USB_Class_DataOut,
+  USB_Class_SOF,
   NULL,
-  usbd_audio_OUT_Incplt,   
-  USBD_audio_GetCfgDesc,
-#ifdef USB_OTG_HS_CORE  
-  USBD_audio_GetCfgDesc, /* use same config as per FS */
-#endif    
+  USB_Class_IsoOUTIncomplete,   
+  USB_Class_GetConfigDescriptor,
+  USB_Class_GetConfigDescriptor, /* use same config as per FS */
 };
+#endif
 
 /* USB AUDIO device Configuration Descriptor */
 static uint8_t usbd_audio_CfgDesc[AUDIO_CONFIG_DESC_SIZE] =
@@ -298,13 +285,13 @@ static uint8_t usbd_audio_CfgDesc[AUDIO_CONFIG_DESC_SIZE] =
   */ 
 
 /**
-* @brief  usbd_audio_Init
+* @brief  USB_Class_Init
 *         Initilaizes the AUDIO interface.
 * @param  pdev: device instance
 * @param  cfgidx: Configuration index
 * @retval status
 */
-static uint8_t  usbd_audio_Init (void  *pdev, 
+uint8_t  USB_Class_Init (void  *pdev, 
                                  uint8_t cfgidx)
 {  
   /* Open EP OUT */
@@ -329,13 +316,13 @@ static uint8_t  usbd_audio_Init (void  *pdev,
 }
 
 /**
-* @brief  usbd_audio_Init
+* @brief  USB_Class_Init
 *         DeInitializes the AUDIO layer.
 * @param  pdev: device instance
 * @param  cfgidx: Configuration index
 * @retval status
 */
-static uint8_t  usbd_audio_DeInit (void  *pdev, 
+uint8_t  USB_Class_DeInit (void  *pdev, 
                                    uint8_t cfgidx)
 { 
   DCD_EP_Close (pdev , AUDIO_OUT_EP);
@@ -350,13 +337,13 @@ static uint8_t  usbd_audio_DeInit (void  *pdev,
 }
 
 /**
-  * @brief  usbd_audio_Setup
+  * @brief  USB_Class_Setup
   *         Handles the Audio control request parsing.
   * @param  pdev: instance
   * @param  req: usb requests
   * @retval status
   */
-static uint8_t  usbd_audio_Setup (void  *pdev, 
+uint8_t  USB_Class_Setup (void  *pdev, 
                                   USB_SETUP_REQ *req)
 {
   uint16_t len=USB_AUDIO_DESC_SIZ;
@@ -425,12 +412,12 @@ static uint8_t  usbd_audio_Setup (void  *pdev,
 }
 
 /**
-  * @brief  usbd_audio_EP0_RxReady
+  * @brief  USB_Class_EP0_RxReady
   *         Handles audio control requests data.
   * @param  pdev: device device instance
   * @retval status
   */
-static uint8_t  usbd_audio_EP0_RxReady (void  *pdev)
+uint8_t  USB_Class_EP0_RxReady (void  *pdev)
 { 
   /* Check if an AudioControl request has been issued */
   if (AudioCtlCmd == AUDIO_REQ_SET_CUR)
@@ -451,25 +438,25 @@ static uint8_t  usbd_audio_EP0_RxReady (void  *pdev)
 }
 
 /**
-  * @brief  usbd_audio_DataIn
+  * @brief  USB_Class_DataIn
   *         Handles the audio IN data stage.
   * @param  pdev: instance
   * @param  epnum: endpoint number
   * @retval status
   */
-static uint8_t  usbd_audio_DataIn (void *pdev, uint8_t epnum)
+uint8_t  USB_Class_DataIn (void *pdev, uint8_t epnum)
 {
   return USBD_OK;
 }
 
 /**
-  * @brief  usbd_audio_DataOut
+  * @brief  USB_Class_DataOut
   *         Handles the Audio Out data stage.
   * @param  pdev: instance
   * @param  epnum: endpoint number
   * @retval status
   */
-static uint8_t  usbd_audio_DataOut (void *pdev, uint8_t epnum)
+uint8_t  USB_Class_DataOut (void *pdev, uint8_t epnum)
 {     
   if (epnum == AUDIO_OUT_EP)
   {    
@@ -505,13 +492,13 @@ static uint8_t  usbd_audio_DataOut (void *pdev, uint8_t epnum)
 }
 
 /**
-  * @brief  usbd_audio_SOF
+  * @brief  USB_Class_SOF
   *         Handles the SOF event (data buffer update and synchronization).
   * @param  pdev: instance
   * @param  epnum: endpoint number
   * @retval status
   */
-static uint8_t  usbd_audio_SOF (void *pdev)
+uint8_t  USB_Class_SOF (void *pdev)
 {     
   /* Check if there are available data in stream buffer.
     In this function, a single variable (PlayFlag) is used to avoid software delays.
@@ -554,12 +541,12 @@ static uint8_t  usbd_audio_SOF (void *pdev)
 }
 
 /**
-  * @brief  usbd_audio_OUT_Incplt
+  * @brief  USB_Class_IsoOUTIncomplete
   *         Handles the iso out incomplete event.
   * @param  pdev: instance
   * @retval status
   */
-static uint8_t  usbd_audio_OUT_Incplt (void  *pdev)
+uint8_t  USB_Class_IsoOUTIncomplete (void  *pdev)
 {
   return USBD_OK;
 }
@@ -599,7 +586,7 @@ static void AUDIO_Req_SetCurrent(void *pdev, USB_SETUP_REQ *req)
                        req->wLength);
     
     /* Set the global variables indicating current request and its length 
-    to the function usbd_audio_EP0_RxReady() which will process the request */
+    to the function USB_Class_EP0_RxReady() which will process the request */
     AudioCtlCmd = AUDIO_REQ_SET_CUR;     /* Set the request value */
     AudioCtlLen = req->wLength;          /* Set the request data length */
     AudioCtlUnit = HIBYTE(req->wIndex);  /* Set the request target unit */
@@ -607,15 +594,23 @@ static void AUDIO_Req_SetCurrent(void *pdev, USB_SETUP_REQ *req)
 }
 
 /**
-  * @brief  USBD_audio_GetCfgDesc 
+  * @brief  USB_Class_GetConfigDescriptor 
   *         Returns configuration descriptor.
   * @param  speed : current device speed
   * @param  length : pointer data length
   * @retval pointer to descriptor buffer
   */
-static uint8_t  *USBD_audio_GetCfgDesc (uint8_t speed, uint16_t *length)
+uint8_t  *USB_Class_GetConfigDescriptor (uint8_t speed, uint16_t *length)
 {
   *length = sizeof (usbd_audio_CfgDesc);
   return usbd_audio_CfgDesc;
 }
+uint8_t  *USB_Class_GetOtherConfigDescriptor (uint8_t speed, uint16_t *length) {
+	return USB_Class_GetConfigDescriptor(speed, length);
+}
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+
+
+
+uint8_t USB_Class_EP0_TxSent(void *pdev) { return 0; }
+uint8_t USB_Class_IsoINIncomplete(void *pdev) { return 0; }
