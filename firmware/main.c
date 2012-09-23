@@ -44,8 +44,12 @@ USART_InitTypeDef debug = {
 	230400*3, USART_WordLength_8b, USART_StopBits_1, USART_Parity_No, USART_Mode_Tx, USART_HardwareFlowControl_None
 };
 
+char LOG[1024] = { 0 };
+
 void writestr(char *str) {
+	strcat(LOG, str);
 	while (*str) {
+		while (!USART_GetFlagStatus(EVAL_COM1, USART_FLAG_TXE));
 		USART_SendData(EVAL_COM1, *str++);
 	}
 }
@@ -65,6 +69,8 @@ int main(void)
   STM_EVAL_LEDOn(LED2);
   STM_EVAL_LEDOn(LED3);
   STM_EVAL_LEDOn(LED4);
+writestr("Hello!\n");
+writestr("derp\n");
 
   USBD_Init(&USB_OTG_dev, USB_OTG_FS_CORE_ID);
 

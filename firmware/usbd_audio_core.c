@@ -266,45 +266,44 @@ uint8_t handle_get_request(void *pdev, USB_SETUP_REQ *req) {
   STM_EVAL_LEDToggle(LED4);
   if (cn != 0xFF && cn != 0) {
     /* Only one channel has controls... */
-  if (cn == 1)  writestr("c1?\n"); 
-  else writestr("bc\n");
     USBD_CtlError (pdev, req);
     return USBD_FAIL;
   }
 
-  if (cs == 0 && req->wLength == 1) {
-    writestr("m\n"); 
+  if (cs == 1 && req->wLength == 1) {
     /* Not muted */
     AudioCtl[0] = 0;
     USBD_CtlSendData(pdev, AudioCtl, req->wLength);
     return USBD_OK;
   }
 
-  if (cs != 1 || req->wLength != 2) {
+  if (cs != 2 || req->wLength != 2) {
     /* We only reply for the volume control... */
-    writestr("bb\n"); 
+    char c[10];
+    c[0] = 'b';
+    btohex(c + 1, cs);
+    btohex(c + 3, req->wLength);
+    c[5] = '\n';
+   c[6]  = 0;
+    writestr(c); 
     USBD_CtlError (pdev, req);
     return USBD_FAIL;
   }
 
   if (req->bRequest == AUDIO_REQ_GET_CUR) {
   STM_EVAL_LEDToggle(LED2);
-    writestr("c\n"); 
-    AudioCtl[0] = 0x15;
-    AudioCtl[1] = 0x15;
+    AudioCtl[0] = 0x00;
+    AudioCtl[1] = 0x00;
   } else if (req->bRequest == AUDIO_REQ_GET_RES) {
-    writestr("@\n"); 
     AudioCtl[0] = 0x20;
     AudioCtl[1] = 0;
   } else if (req->bRequest == AUDIO_REQ_GET_MIN) {
-    writestr("<\n"); 
-    AudioCtl[0] = 0x12; 
-    AudioCtl[1] = 0x12;
+    AudioCtl[0] = 0x20; 
+    AudioCtl[1] = 0xC0;
   STM_EVAL_LEDToggle(LED3);
   } else if (req->bRequest == AUDIO_REQ_GET_MAX) {
-    writestr(">\n"); 
-    AudioCtl[0] = 0x20;
-    AudioCtl[1] = 0x20;
+    AudioCtl[0] = 0x00;
+    AudioCtl[1] = 0x00;
   } else {
     writestr("?!\n"); 
     USBD_CtlError (pdev, req);
@@ -319,7 +318,6 @@ uint8_t  USB_Class_Setup (void *pdev, USB_SETUP_REQ *req) {
   uint16_t len=USB_AUDIO_DESC_SIZ;
   uint8_t *pbuf=usbd_audio_CfgDesc + 18;
   
-  writestr("cs\n");
   switch (req->bmRequest & USB_REQ_TYPE_MASK) {
   case USB_REQ_TYPE_CLASS :    
     /* Audio class requests */
@@ -335,6 +333,7 @@ uint8_t  USB_Class_Setup (void *pdev, USB_SETUP_REQ *req) {
     case AUDIO_REQ_GET_RES:
       return handle_get_request(pdev, req);
     default:
+      writestr("ucl\n");
       USBD_CtlError (pdev, req);
       return USBD_FAIL;
     }
@@ -374,6 +373,11 @@ uint8_t  USB_Class_Setup (void *pdev, USB_SETUP_REQ *req) {
       }
       break;
     }
+    break;
+  default:
+   { char c[4]; btohex(c, req->bmRequest & USB_REQ_TYPE_MASK); c[2] = ' '; c[3] = 0; writestr(c);
+    writestr("uk\n");
+}
   }
   return USBD_OK;
 }
