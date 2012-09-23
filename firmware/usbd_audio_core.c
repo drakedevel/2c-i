@@ -41,17 +41,16 @@
 /*********************************************
    AUDIO Requests management functions
  *********************************************/
-static void AUDIO_Req_SetCurrent(void *pdev, USB_SETUP_REQ *req);
-
 uint8_t  IsocOutBuff [TOTAL_OUT_BUF_SIZE * 2];
 uint8_t* IsocOutWrPtr = IsocOutBuff;
 uint8_t* IsocOutRdPtr = IsocOutBuff;
 
 /* Main Buffer for Audio Control Rrequests transfers and its relative variables */
 uint8_t  AudioCtl[64];
-uint8_t  AudioCtlCmd = 0;
-uint32_t AudioCtlLen = 0;
-uint8_t  AudioCtlUnit = 0;
+static uint8_t  AudioCtlCmd = 0;
+static uint32_t AudioCtlLen = 0;
+static uint16_t  AudioCtlValue = 0;
+static uint16_t  AudioCtlIndex = 0;
 
 static uint32_t PlayFlag = 0;
 
@@ -290,7 +289,6 @@ uint8_t handle_get_request(void *pdev, USB_SETUP_REQ *req) {
   }
 
   if (req->bRequest == AUDIO_REQ_GET_CUR) {
-  STM_EVAL_LEDToggle(LED2);
     AudioCtl[0] = 0x00;
     AudioCtl[1] = 0x00;
   } else if (req->bRequest == AUDIO_REQ_GET_RES) {
@@ -299,7 +297,6 @@ uint8_t handle_get_request(void *pdev, USB_SETUP_REQ *req) {
   } else if (req->bRequest == AUDIO_REQ_GET_MIN) {
     AudioCtl[0] = 0x20; 
     AudioCtl[1] = 0xC0;
-  STM_EVAL_LEDToggle(LED3);
   } else if (req->bRequest == AUDIO_REQ_GET_MAX) {
     AudioCtl[0] = 0x00;
     AudioCtl[1] = 0x00;
@@ -323,7 +320,17 @@ uint8_t  USB_Class_Setup (void *pdev, USB_SETUP_REQ *req) {
     switch (req->bRequest)
     {
     case AUDIO_REQ_SET_CUR:
-      AUDIO_Req_SetCurrent(pdev, req);   
+      if (req->wLength) {
+        /* Prepare the reception of the buffer over EP0 */
+        USBD_CtlPrepareRx (pdev, AudioCtl, req->wLength);
+    
+        /* Set the global variables indicating current request and its length 
+        to the function USB_Class_EP0_RxReady() which will process the request */
+        AudioCtlCmd = AUDIO_REQ_SET_CUR;     /* Set the request value */
+        AudioCtlLen = req->wLength;          /* Set the request data length */
+        AudioCtlValue = req->wValue;
+        AudioCtlIndex = req->wIndex;
+      }
       break;
 
     case AUDIO_REQ_GET_CUR:
@@ -389,21 +396,25 @@ uint8_t  USB_Class_Setup (void *pdev, USB_SETUP_REQ *req) {
   */
 uint8_t  USB_Class_EP0_RxReady (void  *pdev)
 { 
+  uint8_t unit = AudioCtlValue >> 8;
+
   /* Check if an AudioControl request has been issued */
-  if (AudioCtlCmd == AUDIO_REQ_SET_CUR)
-  {/* In this driver, to simplify code, only SET_CUR request is managed */
-    /* Check for which addressed unit the AudioControl request has been issued */
-    if (AudioCtlUnit == AUDIO_OUT_STREAMING_CTRL)
-    {/* In this driver, to simplify code, only one unit is manage */
-      /* Call the audio interface mute function */
-      AUDIO_OUT_fops.MuteCtl(AudioCtl[0]);
-      
-      /* Reset the AudioCtlCmd variable to prevent re-entering this function */
-      AudioCtlCmd = 0;
-      AudioCtlLen = 0;
-    }
-  } 
-  
+  if (!AudioCtlCmd) return USBD_OK;
+  if (HIBYTE(AudioCtlIndex) != AUDIO_OUT_STREAMING_CTRL) return USBD_OK;
+
+  if (unit == 1) {
+    if (AudioCtl[0]) writestr("M+ ");
+    else writestr("M- ");
+  } else if (unit == 2) {
+    char c[20];
+    c[0] = 'V';
+    btohex(c + 1, AudioCtl[1]);
+    btohex(c + 3, AudioCtl[0]);
+    c[5] = ' ';
+    c[6] = 0;
+  }
+
+  AudioCtlCmd = 0;
   return USBD_OK;
 }
 
@@ -521,33 +532,6 @@ uint8_t  USB_Class_IsoOUTIncomplete (void  *pdev)
   return USBD_OK;
 }
 
-/******************************************************************************
-     AUDIO Class requests management
-******************************************************************************/
-
-/**
-  * @brief  AUDIO_Req_SetCurrent
-  *         Handles the SET_CUR Audio control request.
-  * @param  pdev: instance
-  * @param  req: setup class request
-  * @retval status
-  */
-static void AUDIO_Req_SetCurrent(void *pdev, USB_SETUP_REQ *req)
-{ 
-  if (req->wLength)
-  {
-    /* Prepare the reception of the buffer over EP0 */
-    USBD_CtlPrepareRx (pdev, 
-                       AudioCtl,
-                       req->wLength);
-    
-    /* Set the global variables indicating current request and its length 
-    to the function USB_Class_EP0_RxReady() which will process the request */
-    AudioCtlCmd = AUDIO_REQ_SET_CUR;     /* Set the request value */
-    AudioCtlLen = req->wLength;          /* Set the request data length */
-    AudioCtlUnit = HIBYTE(req->wIndex);  /* Set the request target unit */
-  }
-}
 
 /**
   * @brief  USB_Class_GetConfigDescriptor 
@@ -564,9 +548,7 @@ uint8_t  *USB_Class_GetConfigDescriptor (uint8_t speed, uint16_t *length)
 uint8_t  *USB_Class_GetOtherConfigDescriptor (uint8_t speed, uint16_t *length) {
 	return USB_Class_GetConfigDescriptor(speed, length);
 }
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
 
-
-
+/* We don't care about these */
 uint8_t USB_Class_EP0_TxSent(void *pdev) { return 0; }
 uint8_t USB_Class_IsoINIncomplete(void *pdev) { return 0; }

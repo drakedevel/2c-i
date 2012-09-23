@@ -38,6 +38,8 @@
 
 #pragma pack(4) 
 
+volatile uint32_t clock = 0;
+
 USB_OTG_CORE_HANDLE           USB_OTG_dev;
 
 USART_InitTypeDef debug = {
@@ -61,27 +63,26 @@ int main(void)
 
   STM_EVAL_COMInit(COM1, &debug);
 
+  if (SysTick_Config(SystemCoreClock / 100)) { 
+    while (1);
+  } 
   STM_EVAL_LEDInit(LED1);
   STM_EVAL_LEDInit(LED2);
   STM_EVAL_LEDInit(LED3);
   STM_EVAL_LEDInit(LED4);
+  while (clock < 25);
   STM_EVAL_LEDOn(LED1);
-  STM_EVAL_LEDOn(LED2);
+  while (clock < 50);
   STM_EVAL_LEDOn(LED3);
+  while (clock < 75);
   STM_EVAL_LEDOn(LED4);
+  while (clock < 100);
+  STM_EVAL_LEDOn(LED2);
 writestr("Hello!\n");
 writestr("derp\n");
 
   USBD_Init(&USB_OTG_dev, USB_OTG_FS_CORE_ID);
 
-  /* Setup SysTick Timer for 10 msec interrupts 
-     This interrupt is used to display the current state of the Audio Player and
-     the output state (Speaker/Headphone) */
-  if (SysTick_Config(SystemCoreClock / 100))
-  { 
-    /* Capture error */ 
-    while (1);
-  } 
   
   /* Main loop */
   while (1)

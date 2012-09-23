@@ -76,9 +76,12 @@ void EVAL_AUDIO_TransferComplete_CallBack(uint32_t pBuffer, uint32_t Size)
   * @param  None
   * @retval None
   */
+extern void writestr(char *s);
 uint32_t Codec_TIMEOUT_UserCallback(void)
 {
   I2C_InitTypeDef I2C_InitStructure;
+  writestr("TIMEOUT ");
+
   
   //LCD_ErrLog("> I2C Timeout error (CS43L22)\n");
 
