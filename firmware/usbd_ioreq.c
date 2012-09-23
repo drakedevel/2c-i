@@ -28,62 +28,6 @@
 /* Includes ------------------------------------------------------------------*/
 #include "usbd_ioreq.h"
 
-/** @addtogroup STM32_USB_OTG_DEVICE_LIBRARY
-  * @{
-  */
-
-
-/** @defgroup USBD_IOREQ 
-  * @brief control I/O requests module
-  * @{
-  */ 
-
-/** @defgroup USBD_IOREQ_Private_TypesDefinitions
-  * @{
-  */ 
-/**
-  * @}
-  */ 
-
-
-/** @defgroup USBD_IOREQ_Private_Defines
-  * @{
-  */ 
-
-/**
-  * @}
-  */ 
-
-
-/** @defgroup USBD_IOREQ_Private_Macros
-  * @{
-  */ 
-/**
-  * @}
-  */ 
-
-
-/** @defgroup USBD_IOREQ_Private_Variables
-  * @{
-  */ 
-
-/**
-  * @}
-  */ 
-
-
-/** @defgroup USBD_IOREQ_Private_FunctionPrototypes
-  * @{
-  */ 
-/**
-  * @}
-  */ 
-
-
-/** @defgroup USBD_IOREQ_Private_Functions
-  * @{
-  */ 
-
 /**
 * @brief  USBD_CtlSendData
 *         send data on the ctl pipe
@@ -227,18 +171,3 @@ uint16_t  USBD_GetRxCount (USB_OTG_CORE_HANDLE  *pdev , uint8_t epnum)
   return pdev->dev.out_ep[epnum].xfer_count;
 }
 
-/**
-  * @}
-  */ 
-
-
-/**
-  * @}
-  */ 
-
-
-/**
-  * @}
-  */ 
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

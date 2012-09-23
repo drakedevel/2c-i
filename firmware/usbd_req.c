@@ -30,82 +30,13 @@
 #include "usbd_ioreq.h"
 #include "usbd_desc.h"
 
-
-/** @addtogroup STM32_USB_OTG_DEVICE_LIBRARY
-  * @{
-  */
-
-
-/** @defgroup USBD_REQ 
-  * @brief USB standard requests module
-  * @{
-  */ 
-
-/** @defgroup USBD_REQ_Private_TypesDefinitions
-  * @{
-  */ 
-/**
-  * @}
-  */ 
-
-
-/** @defgroup USBD_REQ_Private_Defines
-  * @{
-  */ 
-
-/**
-  * @}
-  */ 
-
-
-/** @defgroup USBD_REQ_Private_Macros
-  * @{
-  */ 
-/**
-  * @}
-  */ 
-
-
-/** @defgroup USBD_REQ_Private_Variables
-  * @{
-  */ 
 extern __IO USB_OTG_DCTL_TypeDef SET_TEST_MODE;
 
-#ifdef USB_OTG_HS_INTERNAL_DMA_ENABLED
-  #if defined ( __ICCARM__ ) /*!< IAR Compiler */
-    #pragma data_alignment=4   
-  #endif
-#endif /* USB_OTG_HS_INTERNAL_DMA_ENABLED */  
 __ALIGN_BEGIN uint32_t USBD_ep_status __ALIGN_END  = 0; 
-
-#ifdef USB_OTG_HS_INTERNAL_DMA_ENABLED
-  #if defined ( __ICCARM__ ) /*!< IAR Compiler */
-    #pragma data_alignment=4   
-  #endif
-#endif /* USB_OTG_HS_INTERNAL_DMA_ENABLED */
-__ALIGN_BEGIN uint32_t  USBD_default_cfg __ALIGN_END  = 0;
-
-#ifdef USB_OTG_HS_INTERNAL_DMA_ENABLED
-  #if defined ( __ICCARM__ ) /*!< IAR Compiler */
-    #pragma data_alignment=4   
-  #endif
-#endif /* USB_OTG_HS_INTERNAL_DMA_ENABLED */
+__ALIGN_BEGIN uint32_t USBD_default_cfg __ALIGN_END  = 0;
 __ALIGN_BEGIN uint32_t  USBD_cfg_status __ALIGN_END  = 0;  
-
-#ifdef USB_OTG_HS_INTERNAL_DMA_ENABLED
-  #if defined ( __ICCARM__ ) /*!< IAR Compiler */
-    #pragma data_alignment=4   
-  #endif
-#endif /* USB_OTG_HS_INTERNAL_DMA_ENABLED */
 __ALIGN_BEGIN uint8_t USBD_StrDesc[USB_MAX_STR_DESC_SIZ] __ALIGN_END ;
-/**
-  * @}
-  */ 
 
-
-/** @defgroup USBD_REQ_Private_FunctionPrototypes
-  * @{
-  */ 
 static void USBD_GetDescriptor(USB_OTG_CORE_HANDLE  *pdev, 
                                USB_SETUP_REQ *req);
 
@@ -128,15 +59,6 @@ static void USBD_ClrFeature(USB_OTG_CORE_HANDLE  *pdev,
                             USB_SETUP_REQ *req);
 
 static uint8_t USBD_GetLen(uint8_t *buf);
-/**
-  * @}
-  */ 
-
-
-/** @defgroup USBD_REQ_Private_Functions
-  * @{
-  */ 
-
 
 /**
 * @brief  USBD_StdDevReq

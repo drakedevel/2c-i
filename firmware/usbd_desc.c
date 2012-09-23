@@ -57,31 +57,9 @@
 #define USBD_CONFIGURATION_HS_STRING    "AUDIO Config"
 #define USBD_INTERFACE_HS_STRING        "AUDIO Interface"
 
-/**
-  * @}
-  */ 
-
-
-/** @defgroup USBD_DESC_Private_Macros
-  * @{
-  */ 
-/**
-  * @}
-  */ 
-
-
 #ifdef USB_OTG_HS_INTERNAL_DMA_ENABLED
- #if defined   (__CC_ARM) /*!< ARM Compiler */
-  __align(4) 
- #elif defined ( __ICCARM__ ) /*!< IAR Compiler */
-  #pragma data_alignment=4
- #elif defined (__GNUC__) /*!< GNU Compiler */
  #pragma pack(4) 
- #elif defined  (__TASKING__) /*!< TASKING Compiler */                           
-  __align(4) 
- #endif /* __CC_ARM */
 #endif
-  
 
 /* USB Standard Device Descriptor */
 uint8_t USBD_DeviceDesc[USB_SIZ_DEVICE_DESC] =
@@ -135,18 +113,6 @@ uint8_t USBD_LangIDDesc[USB_SIZ_STRING_LANGID] =
   * @}
   */ 
 
-
-/** @defgroup USBD_DESC_Private_FunctionPrototypes
-  * @{
-  */ 
-/**
-  * @}
-  */ 
-
-
-/** @defgroup USBD_DESC_Private_Functions
-  * @{
-  */ 
 
 /**
 * @brief  USBD_USR_DeviceDescriptor 
@@ -270,20 +236,4 @@ uint8_t *  USBD_USR_InterfaceStrDescriptor( uint8_t speed , uint16_t *length)
   }
   return USBD_StrDesc;  
 } 
-
-/**
-  * @}
-  */ 
-
-
-/**
-  * @}
-  */ 
-
-
-/**
-  * @}
-  */ 
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
 

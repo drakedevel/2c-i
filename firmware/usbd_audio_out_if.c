@@ -31,43 +31,6 @@
 
 #include <stm324xg_usb_audio_codec.h>
 
-/** @addtogroup STM32_USB_OTG_DEVICE_LIBRARY
-  * @{
-  */
-
-
-/** @defgroup usbd_audio_out_if 
-  * @brief usbd out interface module
-  * @{
-  */ 
-
-/** @defgroup usbd_audio_out_if_Private_TypesDefinitions
-  * @{
-  */ 
-/**
-  * @}
-  */ 
-
-
-/** @defgroup usbd_audio_out_if_Private_Defines
-  * @{
-  */ 
-/**
-  * @}
-  */ 
-
-
-/** @defgroup usbd_audio_out_if_Private_Macros
-  * @{
-  */ 
-/**
-  * @}
-  */ 
-
-
-/** @defgroup usbd_audio_out_if_Private_FunctionPrototypes
-  * @{
-  */
 static uint8_t  Init         (uint32_t  AudioFreq, uint32_t Volume, uint32_t options);
 static uint8_t  DeInit       (uint32_t options);
 static uint8_t  AudioCmd     (uint8_t* pbuf, uint32_t size, uint8_t cmd);
@@ -76,13 +39,6 @@ static uint8_t  MuteCtl      (uint8_t cmd);
 static uint8_t  PeriodicTC   (uint8_t cmd);
 static uint8_t  GetState     (void);
 
-/**
-  * @}
-  */ 
-
-/** @defgroup usbd_audio_out_if_Private_Variables
-  * @{
-  */ 
 AUDIO_FOPS_TypeDef  AUDIO_OUT_fops = 
 {
   Init,
@@ -95,14 +51,6 @@ AUDIO_FOPS_TypeDef  AUDIO_OUT_fops =
 };
 
 static uint8_t AudioState = AUDIO_STATE_INACTIVE;
-
-/**
-  * @}
-  */ 
-
-/** @defgroup usbd_audio_out_if_Private_Functions
-  * @{
-  */ 
 
 /**
   * @brief  Init
@@ -307,17 +255,5 @@ static uint8_t  GetState   (void)
 {
   return AudioState;
 }
-
-/**
-  * @}
-  */ 
-
-/**
-  * @}
-  */ 
-
-/**
-  * @}
-  */ 
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

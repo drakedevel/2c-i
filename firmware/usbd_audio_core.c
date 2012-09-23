@@ -81,44 +81,6 @@
 #include "usbd_audio_core.h"
 #include "usbd_audio_out_if.h"
 
-/** @addtogroup STM32_USB_OTG_DEVICE_LIBRARY
-  * @{
-  */
-
-
-/** @defgroup usbd_audio 
-  * @brief usbd core module
-  * @{
-  */ 
-
-/** @defgroup usbd_audio_Private_TypesDefinitions
-  * @{
-  */ 
-/**
-  * @}
-  */ 
-
-
-/** @defgroup usbd_audio_Private_Defines
-  * @{
-  */ 
-/**
-  * @}
-  */ 
-
-
-/** @defgroup usbd_audio_Private_Macros
-  * @{
-  */ 
-/**
-  * @}
-  */ 
-
-
-/** @defgroup usbd_audio_Private_FunctionPrototypes
-  * @{
-  */
-
 /*********************************************
    AUDIO Device library callbacks
  *********************************************/
@@ -656,16 +618,4 @@ static uint8_t  *USBD_audio_GetCfgDesc (uint8_t speed, uint16_t *length)
   *length = sizeof (usbd_audio_CfgDesc);
   return usbd_audio_CfgDesc;
 }
-/**
-  * @}
-  */ 
-
-/**
-  * @}
-  */ 
-
-/**
-  * @}
-  */ 
-
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
