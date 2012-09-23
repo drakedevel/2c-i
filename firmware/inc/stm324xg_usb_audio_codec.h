@@ -42,9 +42,6 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx.h"
-#include "stm324xg_eval_ioe.h" /* IOExpander driver is included in order to allow 
-                                   CS43L22 codec reset pin managment on the 
-                                   evaluation board */
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/

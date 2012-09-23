@@ -16,7 +16,7 @@ SRCS += usb_bsp.c usb_core.c usb_dcd.c usb_dcd_int.c
 SRCS += usbd_core.c usbd_ioreq.c usbd_req.c usbd_audio_core.c usbd_audio_out_if.c usbd_desc.c usbd_usr.c
 SRCS += ../ext/minilib/src/minilib.c
 
-SRCS += stm324xg_usb_audio_codec.c stm324xg_eval_ioe.c stm324xg_eval.c stm32fxxx_it.c
+SRCS += stm324xg_usb_audio_codec.c stm324xg_eval.c stm32fxxx_it.c
 
 SRCS += periph/src/stm32f4xx_dma.c periph/src/stm32f4xx_spi.c periph/src/stm32f4xx_i2c.c periph/src/stm32f4xx_rcc.c periph/src/stm32f4xx_gpio.c \
 	periph/src/stm32f4xx_exti.c periph/src/misc.c periph/src/stm32f4xx_syscfg.c periph/src/stm32f4xx_usart.c periph/src/stm32f4xx_sdio.c

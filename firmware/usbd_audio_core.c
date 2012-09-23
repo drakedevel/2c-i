@@ -263,7 +263,6 @@ uint8_t handle_get_request(void *pdev, USB_SETUP_REQ *req) {
   uint8_t cs = req->wValue >> 8;
   uint8_t cn = req->wValue & 0xFF;
 
-  STM_EVAL_LEDToggle(LED4);
   if (cn != 0xFF && cn != 0) {
     /* Only one channel has controls... */
     USBD_CtlError (pdev, req);

@@ -592,7 +592,7 @@ uint32_t Codec_Stop(uint32_t CodecPdwnMode)
     Delay(0xFFF);
     
     /* Reset The pin */
-    IOE_WriteIOPin(AUDIO_RESET_PIN, BitReset);
+    // XXX IOE_WriteIOPin(AUDIO_RESET_PIN, BitReset);
   }
   
   return counter;    
@@ -658,17 +658,14 @@ uint32_t Codec_Mute(uint32_t Cmd)
   */
 static void Codec_Reset(void)
 {
-  /* Configure the IO Expander (to use the Codec Reset pin mapped on the IOExpander) */
-  IOE_Config();
-  
   /* Power Down the codec */
-  IOE_WriteIOPin(AUDIO_RESET_PIN, BitReset);
+  // XXX IOE_WriteIOPin(AUDIO_RESET_PIN, BitReset);
 
   /* wait for a delay to insure registers erasing */
   Delay(CODEC_RESET_DELAY); 
   
   /* Power on the codec */
-  IOE_WriteIOPin(AUDIO_RESET_PIN, BitSet);
+  // XXX IOE_WriteIOPin(AUDIO_RESET_PIN, BitSet);
 }
 
 /**

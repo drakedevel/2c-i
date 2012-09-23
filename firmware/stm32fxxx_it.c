@@ -33,6 +33,7 @@
 #include "usb_core.h"
 #include "usbd_core.h"
 #include "usbd_audio_core.h"
+#include "stm32f4xx_exti.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -174,38 +175,12 @@ void OTG_HS_EP1_OUT_IRQHandler(void)
   * @param  None
   * @retval None
   */
-#if defined (USE_STM322xG_EVAL)
 void EXTI15_10_IRQHandler(void)
-#elif defined(USE_STM324xG_EVAL)
-void EXTI15_10_IRQHandler(void)
-#elif defined (USE_STM3210C_EVAL)
-void EXTI9_5_IRQHandler(void)
-#endif /* USE_STM322xG_EVAL */
 {
   static uint8_t FallingEdge = 0;
   
-  /* Check if the interrupt source is the KEY EXTI line */
-  if (EXTI_GetFlagStatus(KEY_BUTTON_EXTI_LINE) == SET)
-  {
-    /* Check if the push button is pushed or released (to ignore the button released event) */
-    if (FallingEdge == 0)
-    {
       /* Switch the output target between Speaker and Headphone */
       OutputState = (OutputState == OUTPUT_DEVICE_SPEAKER)? \
                     OUTPUT_DEVICE_HEADPHONE : OUTPUT_DEVICE_SPEAKER;
     
-    /* Increment the variable to indicate that next interrupt corresponds to push
-    button released event: Release event should be ignored */
-    FallingEdge++;
-    }
-    else
-    {
-      /* Reset the variable to indicate that the next interrupt corresponds to push
-      button pushed event. */
-      FallingEdge = 0;
-    }
-    
-    /* Clear the interrupt line flag */
-    EXTI_ClearITPendingBit(KEY_BUTTON_EXTI_LINE);
-  }
 }
