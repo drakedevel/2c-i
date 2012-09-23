@@ -161,6 +161,8 @@ uint32_t EVAL_AUDIO_DeInit(void)
   */
 uint32_t EVAL_AUDIO_Play(uint16_t* pBuffer, uint32_t Size)
 {
+STM_EVAL_LEDToggle(LED4);
+
   /* Set the total number of data to be played (count in half-word) */
   AudioTotalSize = Size/2;
 
@@ -398,16 +400,10 @@ uint32_t Codec_Init(uint16_t OutputDevice, uint8_t Volume, uint32_t AudioFreq)
   uint32_t counter = 0;   
   writestr("ci ");
   
-  /* Reset the Codec Registers */
-  Codec_Reset();
-
-  /* Configure the Codec related IOs */
   Codec_GPIO_Init(); 
-
-  /* Initialize the Control interface of the Audio Codec */
+  Codec_Reset();
   Codec_CtrlInterface_Init();     
   
-writestr("r ");
   /* Keep Codec powered OFF */
   counter += Codec_WriteRegister(0x02, 0x01);  
 writestr("r ");
@@ -542,10 +538,10 @@ uint32_t Codec_Play(void)
 uint32_t Codec_PauseResume(uint32_t Cmd)
 {
   uint32_t counter = 0;   
-  writestr("pr "); 
   /* Pause the audio file playing */
   if (Cmd == AUDIO_PAUSE)
   { 
+    STM_EVAL_LEDOff(LED3);
     /* Mute the output first */
     counter += Codec_Mute(AUDIO_MUTE_ON);
 
@@ -554,6 +550,7 @@ uint32_t Codec_PauseResume(uint32_t Cmd)
   }
   else /* AUDIO_RESUME */
   {   
+    STM_EVAL_LEDOn(LED3);
     /* Unmute the output first */
     counter += Codec_Mute(AUDIO_MUTE_OFF);
     
@@ -639,15 +636,16 @@ uint32_t Codec_VolumeCtrl(uint8_t Volume)
 uint32_t Codec_Mute(uint32_t Cmd)
 {
   uint32_t counter = 0;  
-  writestr("mut "); 
   
   /* Set the Mute mode */
   if (Cmd == AUDIO_MUTE_ON)
   {
+    STM_EVAL_LEDOff(LED2);
     counter += Codec_WriteRegister(0x04, 0xFF);
   }
   else /* AUDIO_MUTE_OFF Disable the Mute */
   {
+    STM_EVAL_LEDOn(LED2);
     counter += Codec_WriteRegister(0x04, OutputDev);
   }
   
@@ -669,6 +667,7 @@ static void Codec_Reset(void)
   Codec_Reset_Low();
   Delay(CODEC_RESET_DELAY); 
   Codec_Reset_High();
+  Delay(CODEC_RESET_DELAY); 
 }
 
 /**
@@ -727,12 +726,10 @@ static uint32_t Codec_WriteRegister(uint32_t RegisterAddr, uint32_t RegisterValu
 
   /*!< While the bus is busy */
   CODECTimeout = CODEC_LONG_TIMEOUT;
-writestr("1");
   while(I2C_GetFlagStatus(CODEC_I2C, I2C_FLAG_BUSY))
   {
     if((CODECTimeout--) == 0) return Codec_TIMEOUT_UserCallback();
   }
-writestr("2");
   
   /* Start the config sequence */
   I2C_GenerateSTART(CODEC_I2C, ENABLE);
@@ -743,7 +740,6 @@ writestr("2");
   {
     if((CODECTimeout--) == 0) return Codec_TIMEOUT_UserCallback();
   }
-writestr("3");
   
   /* Transmit the slave address and enable writing operation */
   I2C_Send7bitAddress(CODEC_I2C, CODEC_ADDRESS, I2C_Direction_Transmitter);
@@ -754,7 +750,6 @@ writestr("3");
   {
     if((CODECTimeout--) == 0) return Codec_TIMEOUT_UserCallback();
   }
-writestr("4");
 
   /* Transmit the first address for write operation */
   I2C_SendData(CODEC_I2C, RegisterAddr);
@@ -765,7 +760,6 @@ writestr("4");
   {
     if((CODECTimeout--) == 0) return Codec_TIMEOUT_UserCallback();
   }
-writestr("5");
 
   /* Disable the interrupts mechanism to prevent the I2C communication from corruption */
   __disable_irq();

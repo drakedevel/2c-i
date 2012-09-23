@@ -82,9 +82,6 @@ uint32_t Codec_TIMEOUT_UserCallback(void)
   I2C_InitTypeDef I2C_InitStructure;
   writestr("TIMEOUT ");
 
-  
-  //LCD_ErrLog("> I2C Timeout error (CS43L22)\n");
-
   I2C_GenerateSTOP(I2C1, ENABLE);
   I2C_SoftwareResetCmd(I2C1, ENABLE);
   I2C_SoftwareResetCmd(I2C1, DISABLE);
@@ -102,8 +99,6 @@ uint32_t Codec_TIMEOUT_UserCallback(void)
   /* Enable the I2C peripheral */
   I2C_Cmd(I2C1, ENABLE);  
   I2C_Init(I2C1, &I2C_InitStructure);  
-
-  //LCD_UsrLog("> I2C error recovered.\n");
   
   return 0;
 }
