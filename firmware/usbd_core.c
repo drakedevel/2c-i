@@ -417,4 +417,3 @@ static uint8_t USBD_DevDisconnected(USB_OTG_CORE_HANDLE  *pdev)
   return USBD_OK;
 }
 #endif
-
