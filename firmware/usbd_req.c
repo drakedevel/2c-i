@@ -45,6 +45,61 @@ static void USBD_GetStatus(USB_OTG_CORE_HANDLE  *pdev, USB_SETUP_REQ *req);
 static void USBD_SetFeature(USB_OTG_CORE_HANDLE  *pdev, USB_SETUP_REQ *req);
 static void USBD_ClrFeature(USB_OTG_CORE_HANDLE  *pdev, USB_SETUP_REQ *req);
 
+#define USBD_VID                        0x0483
+#define USBD_PID                        0x5730
+#define USBD_LANGID_STRING              0x409
+#ifdef USB_OTG_HS_INTERNAL_DMA_ENABLED
+ #pragma pack(4) 
+#endif
+
+/* USB Standard Device Descriptor */
+uint8_t USBD_DeviceDesc[USB_SIZ_DEVICE_DESC] =
+  {
+    0x12,                       /*bLength */
+    USB_DEVICE_DESCRIPTOR_TYPE, /*bDescriptorType*/
+    0x00,                       /*bcdUSB */
+    0x02,
+    0x00,                       /*bDeviceClass*/
+    0x00,                       /*bDeviceSubClass*/
+    0x00,                       /*bDeviceProtocol*/
+    USB_OTG_MAX_EP0_SIZE,      /*bMaxPacketSize*/
+    LOBYTE(USBD_VID),           /*idVendor*/
+    HIBYTE(USBD_VID),           /*idVendor*/
+    LOBYTE(USBD_PID),           /*idVendor*/
+    HIBYTE(USBD_PID),           /*idVendor*/
+    0x00,                       /*bcdDevice rel. 2.00*/
+    0x02,
+    USBD_IDX_MFC_STR,           /*Index of manufacturer  string*/
+    USBD_IDX_PRODUCT_STR,       /*Index of product string*/
+    USBD_IDX_SERIAL_STR,        /*Index of serial number string*/
+    USBD_CFG_MAX_NUM            /*bNumConfigurations*/
+  }
+  ; /* USB_DeviceDescriptor */
+
+/* USB Standard Device Descriptor */
+uint8_t USBD_DeviceQualifierDesc[USB_LEN_DEV_QUALIFIER_DESC] =
+{
+  USB_LEN_DEV_QUALIFIER_DESC,
+  USB_DESC_TYPE_DEVICE_QUALIFIER,
+  0x00,
+  0x02,
+  0x00,
+  0x00,
+  0x00,
+  0x40,
+  0x01,
+  0x00,
+};
+
+/* USB Standard Device Descriptor */
+uint8_t USBD_LangIDDesc[USB_SIZ_STRING_LANGID] =
+{
+     USB_SIZ_STRING_LANGID,         
+     USB_DESC_TYPE_STRING,       
+     LOBYTE(USBD_LANGID_STRING),
+     HIBYTE(USBD_LANGID_STRING), 
+};
+
 /**
 * @brief  USBD_StdDevReq
 *         Handle standard usb device requests
@@ -257,7 +312,8 @@ static void USBD_GetDescriptor(USB_OTG_CORE_HANDLE  *pdev,
   switch (req->wValue >> 8)
   {
   case USB_DESC_TYPE_DEVICE:
-    pbuf = USBD_USR_DeviceDescriptor(pdev->cfg.speed, &len);
+    len = sizeof(USBD_DeviceDesc);
+    pbuf = USBD_DeviceDesc;
     if ((req->wLength == 64) ||( pdev->dev.device_status == USB_OTG_DEFAULT))  
     {                  
       len = 8;
@@ -281,27 +337,33 @@ static void USBD_GetDescriptor(USB_OTG_CORE_HANDLE  *pdev,
     switch ((uint8_t)(req->wValue))
     {
     case USBD_IDX_LANGID_STR:
-     pbuf = USBD_USR_LangIDStrDescriptor(pdev->cfg.speed, &len);        
+      pbuf = USBD_LangIDDesc;
+      len = sizeof(USBD_LangIDDesc);
       break;
       
     case USBD_IDX_MFC_STR:
-      pbuf = USBD_USR_ManufacturerStrDescriptor(pdev->cfg.speed, &len);
+      USBD_GetString("J4Labs", USBD_StrDesc, &len);
+      pbuf = USBD_StrDesc;
       break;
       
     case USBD_IDX_PRODUCT_STR:
-      pbuf = USBD_USR_ProductStrDescriptor(pdev->cfg.speed, &len);
+      USBD_GetString(pdev->cfg.speed ? "2C-I [FS]" : "2C-I [HS]", USBD_StrDesc, &len);
+      pbuf = USBD_StrDesc;
       break;
       
     case USBD_IDX_SERIAL_STR:
-      pbuf = USBD_USR_SerialStrDescriptor(pdev->cfg.speed, &len);
+      USBD_GetString(pdev->cfg.speed ? "000123" : "000124", USBD_StrDesc, &len);
+      pbuf = USBD_StrDesc;
       break;
       
     case USBD_IDX_CONFIG_STR:
-      pbuf = USBD_USR_ConfigStrDescriptor(pdev->cfg.speed, &len);
+      USBD_GetString ("Audio Config", USBD_StrDesc, &len);
+      pbuf = USBD_StrDesc;
       break;
       
     case USBD_IDX_INTERFACE_STR:
-      pbuf = USBD_USR_InterfaceStrDescriptor(pdev->cfg.speed, &len);
+      USBD_GetString ("Audio Interface", USBD_StrDesc, &len);
+      pbuf = USBD_StrDesc;
       break;
       
     default:
@@ -691,7 +753,7 @@ void USBD_CtlError( USB_OTG_CORE_HANDLE  *pdev,
   * @param  len : descriptor length
   * @retval None
   */
-void USBD_GetString(uint8_t *desc, uint8_t *unicode, uint16_t *len)
+void USBD_GetString(char *desc, uint8_t *unicode, uint16_t *len)
 {
   uint8_t idx = 2;
   if (!desc) return;

@@ -13,7 +13,7 @@ INCLUDES += -I../ext/minilib/inc
 INCLUDES += -Iperiph/inc
 
 SRCS += usb_bsp.c usb_core.c usb_dcd.c usb_dcd_int.c
-SRCS += usbd_core.c usbd_ioreq.c usbd_req.c usbd_audio_core.c usbd_audio_out_if.c usbd_desc.c usbd_usr.c
+SRCS += usbd_core.c usbd_ioreq.c usbd_req.c usbd_audio_core.c usbd_audio_out_if.c usbd_usr.c
 SRCS += ../ext/minilib/src/minilib.c
 
 SRCS += stm324xg_usb_audio_codec.c stm32fxxx_it.c
