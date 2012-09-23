@@ -36,10 +36,6 @@
 
 void USB_OTG_BSP_Init(void) {
   GPIO_InitTypeDef GPIO_InitStructure;    
-#if defined(USB_OTG_FS_LOW_PWR_MGMT_SUPPORT) || defined(USB_OTG_HS_LOW_PWR_MGMT_SUPPORT)  
-  EXTI_InitTypeDef EXTI_InitStructure;
-  NVIC_InitTypeDef NVIC_InitStructure; 
-#endif  
   
   RCC_AHB1PeriphClockCmd( RCC_AHB1Periph_GPIOA , ENABLE);  
   
@@ -147,16 +143,3 @@ void USB_OTG_BSP_mDelay (const uint32_t msec)
 {
   USB_OTG_BSP_uDelay(msec * 1000);   
 }
-/**
-* @}
-*/ 
-
-/**
-* @}
-*/ 
-
-/**
-* @}
-*/
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

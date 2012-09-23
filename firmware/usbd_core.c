@@ -32,46 +32,6 @@
 #include "usb_dcd_int.h"
 #include "usb_bsp.h"
 
-/** @addtogroup STM32_USB_OTG_DEVICE_LIBRARY
-* @{
-*/
-
-
-/** @defgroup USBD_CORE 
-* @brief usbd core module
-* @{
-*/ 
-
-/** @defgroup USBD_CORE_Private_TypesDefinitions
-* @{
-*/ 
-/**
-* @}
-*/ 
-
-
-/** @defgroup USBD_CORE_Private_Defines
-* @{
-*/ 
-
-/**
-* @}
-*/ 
-
-
-/** @defgroup USBD_CORE_Private_Macros
-* @{
-*/ 
-/**
-* @}
-*/ 
-
-
-
-
-/** @defgroup USBD_CORE_Private_FunctionPrototypes
-* @{
-*/ 
 static uint8_t USBD_SetupStage(USB_OTG_CORE_HANDLE *pdev);
 static uint8_t USBD_DataOutStage(USB_OTG_CORE_HANDLE *pdev , uint8_t epnum);
 static uint8_t USBD_DataInStage(USB_OTG_CORE_HANDLE *pdev , uint8_t epnum);
@@ -86,13 +46,6 @@ static uint8_t USBD_DevDisconnected(USB_OTG_CORE_HANDLE  *pdev);
 static uint8_t USBD_IsoINIncomplete(USB_OTG_CORE_HANDLE  *pdev);
 static uint8_t USBD_IsoOUTIncomplete(USB_OTG_CORE_HANDLE  *pdev);
 static uint8_t  USBD_RunTestMode (USB_OTG_CORE_HANDLE  *pdev) ;
-/**
-* @}
-*/ 
-
-/** @defgroup USBD_CORE_Private_Variables
-* @{
-*/ 
 
 __IO USB_OTG_DCTL_TypeDef SET_TEST_MODE;
 
@@ -139,7 +92,6 @@ void USBD_Init(USB_OTG_CORE_HANDLE *pdev,
 {
   /* Hardware Init */
   USB_OTG_BSP_Init();  
-  USBD_DeInit(pdev);
   
   /*Register class and user callbacks */
   pdev->dev.class_cb = class_cb;
@@ -154,19 +106,6 @@ void USBD_Init(USB_OTG_CORE_HANDLE *pdev,
   
   /* Enable Interrupts */
   USB_OTG_BSP_EnableInterrupt();
-}
-
-/**
-* @brief  USBD_DeInit 
-*         Re-Initialize th device library
-* @param  pdev: device instance
-* @retval status: status
-*/
-USBD_Status USBD_DeInit(USB_OTG_CORE_HANDLE *pdev)
-{
-  /* Software Init */
-  
-  return USBD_OK;
 }
 
 /**
@@ -487,19 +426,4 @@ static uint8_t USBD_DevDisconnected(USB_OTG_CORE_HANDLE  *pdev)
   return USBD_OK;
 }
 #endif
-/**
-* @}
-*/ 
-
-
-/**
-* @}
-*/ 
-
-
-/**
-* @}
-*/ 
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
 

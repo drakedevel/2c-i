@@ -35,20 +35,6 @@
 #include "usb_defines.h"
 
 
-/** @addtogroup USB_OTG_DRIVER
-  * @{
-  */
-  
-/** @defgroup USB_CORE
-  * @brief usb otg driver core layer
-  * @{
-  */ 
-
-
-/** @defgroup USB_CORE_Exported_Defines
-  * @{
-  */ 
-
 #define USB_OTG_EP0_IDLE                          0
 #define USB_OTG_EP0_SETUP                         1
 #define USB_OTG_EP0_DATA_IN                       2
@@ -70,10 +56,6 @@
   * @}
   */ 
 #define   MAX_DATA_LENGTH                        0x200
-
-/** @defgroup USB_CORE_Exported_Types
-  * @{
-  */ 
 
 
 typedef enum {
@@ -297,17 +279,9 @@ typedef struct USB_OTG_handle
 {
   USB_OTG_CORE_CFGS    cfg;
   USB_OTG_CORE_REGS    regs;
-#ifdef USE_DEVICE_MODE
   DCD_DEV     dev;
-#endif
-#ifdef USE_HOST_MODE
-  HCD_DEV     host;
-#endif
-#ifdef USE_OTG_MODE
-  OTG_DEV     otg;
-#endif
 }
-USB_OTG_CORE_HANDLE , *PUSB_OTG_CORE_HANDLE;
+USB_OTG_CORE_HANDLE;
 
 /**
   * @}
@@ -355,8 +329,7 @@ uint8_t      USB_OTG_IsHostMode      (USB_OTG_CORE_HANDLE *pdev);
 uint8_t      USB_OTG_IsDeviceMode    (USB_OTG_CORE_HANDLE *pdev);
 uint32_t     USB_OTG_GetMode         (USB_OTG_CORE_HANDLE *pdev);
 USB_OTG_STS  USB_OTG_PhyInit         (USB_OTG_CORE_HANDLE *pdev);
-USB_OTG_STS  USB_OTG_SetCurrentMode  (USB_OTG_CORE_HANDLE *pdev,
-    uint8_t mode);
+USB_OTG_STS  USB_OTG_SetDeviceMode  (USB_OTG_CORE_HANDLE *pdev);
 
 /*********************** HOST APIs ********************************************/
 #ifdef USE_HOST_MODE

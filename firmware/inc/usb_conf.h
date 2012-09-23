@@ -32,19 +32,6 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx.h"
 
-/** @addtogroup USB_OTG_DRIVER
-  * @{
-  */
-  
-/** @defgroup USB_CONF
-  * @brief USB low level driver configuration file
-  * @{
-  */ 
-
-/** @defgroup USB_CONF_Exported_Defines
-  * @{
-  */ 
-
 /* USB Core and PHY interface configuration.
    Tip: To avoid modifying these defines each time you need to change the USB
         configuration, you can declare the needed define in your toolchain
@@ -196,19 +183,11 @@
 //#define VBUS_SENSING_ENABLED
 
 /****************** USB OTG MODE CONFIGURATION ********************************/
-//#define USE_HOST_MODE
 #define USE_DEVICE_MODE
-//#define USE_OTG_MODE
 
 #ifndef USB_OTG_FS_CORE
  #ifndef USB_OTG_HS_CORE
     #error  "USB_OTG_HS_CORE or USB_OTG_FS_CORE should be defined"
- #endif
-#endif
-
-#ifndef USE_DEVICE_MODE
- #ifndef USE_HOST_MODE
-    #error  "USE_DEVICE_MODE or USE_HOST_MODE should be defined"
  #endif
 #endif
 

@@ -49,22 +49,15 @@ int main(void)
   __IO uint32_t i = 0;
   SystemInit();
 
-STM_EVAL_LEDInit(LED1);
-STM_EVAL_LEDInit(LED2);
-STM_EVAL_LEDInit(LED3);
-STM_EVAL_LEDInit(LED4);
-STM_EVAL_LEDOn(LED1);
-STM_EVAL_LEDOn(LED2);
-STM_EVAL_LEDOn(LED3);
-STM_EVAL_LEDOn(LED4);
+  STM_EVAL_LEDInit(LED1);
+  STM_EVAL_LEDInit(LED2);
+  STM_EVAL_LEDInit(LED3);
+  STM_EVAL_LEDInit(LED4);
+  STM_EVAL_LEDOn(LED1);
+  STM_EVAL_LEDOn(LED2);
+  STM_EVAL_LEDOn(LED3);
+  STM_EVAL_LEDOn(LED4);
 
-  /*!< At this stage the microcontroller clock setting is already configured, 
-  this is done through SystemInit() function which is called from startup
-  file (startup_stm32fxxx_xx.s) before to branch to application main.
-  To reconfigure the default setting of SystemInit() function, refer to
-  system_stm32fxxx.c file
-  */  
- 
   USBD_Init(&USB_OTG_dev,
             USB_OTG_FS_CORE_ID,
             &USR_desc, 

@@ -30,64 +30,6 @@
 #include "usb_bsp.h"
 
 
-/** @addtogroup USB_OTG_DRIVER
-* @{
-*/
-
-/** @defgroup USB_DCD 
-* @brief This file is the interface between EFSL ans Host mass-storage class
-* @{
-*/
-
-
-/** @defgroup USB_DCD_Private_Defines
-* @{
-*/ 
-/**
-* @}
-*/ 
-
-
-/** @defgroup USB_DCD_Private_TypesDefinitions
-* @{
-*/ 
-/**
-* @}
-*/ 
-
-
-
-/** @defgroup USB_DCD_Private_Macros
-* @{
-*/ 
-/**
-* @}
-*/ 
-
-
-/** @defgroup USB_DCD_Private_Variables
-* @{
-*/ 
-/**
-* @}
-*/ 
-
-
-/** @defgroup USB_DCD_Private_FunctionPrototypes
-* @{
-*/ 
-
-/**
-* @}
-*/ 
-
-
-/** @defgroup USB_DCD_Private_Functions
-* @{
-*/ 
-
-
-
 void DCD_Init(USB_OTG_CORE_HANDLE *pdev , 
               USB_OTG_CORE_ID_TypeDef coreID)
 {
@@ -135,7 +77,7 @@ void DCD_Init(USB_OTG_CORE_HANDLE *pdev ,
 
 
   /* Force Device Mode*/
-  USB_OTG_SetCurrentMode(pdev, DEVICE_MODE);
+  USB_OTG_SetDeviceMode(pdev);
   
   /* Init Device */
   USB_OTG_CoreInitDev(pdev);
