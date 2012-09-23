@@ -34,12 +34,6 @@
 #include "stm324xg_usb_audio_codec.h"
 
 void USBD_USR_Init(void) {  
-  /* Initialize LEDs */
-  STM_EVAL_LEDInit(LED1);
-  STM_EVAL_LEDInit(LED2);
-  STM_EVAL_LEDInit(LED3);
-  STM_EVAL_LEDInit(LED4);   
-
   // XXX outputf("USB Device Init\n");
 }
 
