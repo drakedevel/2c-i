@@ -41,48 +41,9 @@ GPIO_TypeDef* COM_TX_PORT[COMn] = {EVAL_COM1_TX_GPIO_PORT};
 GPIO_TypeDef* COM_RX_PORT[COMn] = {EVAL_COM1_RX_GPIO_PORT};
 const uint32_t COM_USART_CLK[COMn] = {EVAL_COM1_CLK};
 const uint32_t COM_TX_PORT_CLK[COMn] = {EVAL_COM1_TX_GPIO_CLK};
-const uint32_t COM_RX_PORT_CLK[COMn] = {EVAL_COM1_RX_GPIO_CLK};
 const uint16_t COM_TX_PIN[COMn] = {EVAL_COM1_TX_PIN};
-const uint16_t COM_RX_PIN[COMn] = {EVAL_COM1_RX_PIN};
 const uint16_t COM_TX_PIN_SOURCE[COMn] = {EVAL_COM1_TX_SOURCE};
-const uint16_t COM_RX_PIN_SOURCE[COMn] = {EVAL_COM1_RX_SOURCE};
 const uint16_t COM_TX_AF[COMn] = {EVAL_COM1_TX_AF};
-const uint16_t COM_RX_AF[COMn] = {EVAL_COM1_RX_AF};
-
-GPIO_TypeDef* GPIO_PORT[LEDn] = {LED1_GPIO_PORT, LED2_GPIO_PORT, LED3_GPIO_PORT, LED4_GPIO_PORT};
-const uint16_t GPIO_PIN[LEDn] = {LED1_PIN, LED2_PIN, LED3_PIN, LED4_PIN};
-const uint32_t GPIO_CLK[LEDn] = {LED1_GPIO_CLK, LED2_GPIO_CLK, LED3_GPIO_CLK, LED4_GPIO_CLK};
-
-DMA_InitTypeDef    sEEDMA_InitStructure; 
-NVIC_InitTypeDef   NVIC_InitStructure;
-
-void STM_EVAL_LEDInit(Led_TypeDef Led)
-{
-  GPIO_InitTypeDef  GPIO_InitStructure;
-  
-  /* Enable the GPIO_LED Clock */
-  RCC_AHB1PeriphClockCmd(GPIO_CLK[Led], ENABLE);
-
-  /* Configure the GPIO_LED pin */
-  GPIO_InitStructure.GPIO_Pin = GPIO_PIN[Led];
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
-  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-  GPIO_Init(GPIO_PORT[Led], &GPIO_InitStructure);
-}
-
-void STM_EVAL_LEDOn(Led_TypeDef Led) {
-  GPIO_PORT[Led]->BSRRL = GPIO_PIN[Led];
-}
-
-void STM_EVAL_LEDOff(Led_TypeDef Led) {
-  GPIO_PORT[Led]->BSRRH = GPIO_PIN[Led];  
-}
-
-void STM_EVAL_LEDToggle(Led_TypeDef Led) {
-  GPIO_PORT[Led]->ODR ^= GPIO_PIN[Led];
-}
 
 /**
   * @brief  Configures COM port.
@@ -98,16 +59,10 @@ void STM_EVAL_COMInit(COM_TypeDef COM, USART_InitTypeDef* USART_InitStruct)
 {
   GPIO_InitTypeDef GPIO_InitStructure;
 
-  /* Enable GPIO clock */
-  RCC_AHB1PeriphClockCmd(COM_TX_PORT_CLK[COM] | COM_RX_PORT_CLK[COM], ENABLE);
+  RCC_AHB1PeriphClockCmd(EVAL_COM1_TX_GPIO_CLK, ENABLE);
+  RCC_APB1PeriphClockCmd(EVAL_COM1_CLK, ENABLE);
 
-  if (COM == COM1)
-  {
-    /* Enable UART clock */
-    RCC_APB1PeriphClockCmd(COM_USART_CLK[COM], ENABLE);
-  }
-
-  GPIO_PinAFConfig(COM_TX_PORT[COM], COM_TX_PIN_SOURCE[COM], COM_TX_AF[COM]);
+  GPIO_PinAFConfig(EVAL_COM1_TX_GPIO_PORT, EVAL_COM1_TX_SOURCE, EVAL_COM1_TX_AF);
 
   /* Configure USART Tx as alternate function  */
   GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
@@ -115,12 +70,9 @@ void STM_EVAL_COMInit(COM_TypeDef COM, USART_InitTypeDef* USART_InitStruct)
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
   GPIO_InitStructure.GPIO_Pin = COM_TX_PIN[COM];
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-  GPIO_Init(COM_TX_PORT[COM], &GPIO_InitStructure);
+  GPIO_Init(COM_TX_PORT, &GPIO_InitStructure);
 
-  /* USART configuration */
-  USART_Init(COM_USART[COM], USART_InitStruct);
-    
-  /* Enable USART */
-  USART_Cmd(COM_USART[COM], ENABLE);
+  USART_Init(EVAL_COM1, USART_InitStruct);
+  USART_Cmd(EVAL_COM1, ENABLE);
 }
 

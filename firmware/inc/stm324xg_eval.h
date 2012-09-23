@@ -61,28 +61,42 @@ typedef enum
 /** @addtogroup STM324xG_EVAL_LOW_LEVEL_LED
   * @{
   */
-#define LEDn                             4
+#define LED_GPIO_PORT                   GPIOD
+#define LED_GPIO_CLK                    RCC_AHB1Periph_GPIOD 
+#define LED1_PIN                        GPIO_Pin_13
+#define LED2_PIN                        GPIO_Pin_12
+#define LED3_PIN                        GPIO_Pin_14
+#define LED4_PIN                        GPIO_Pin_15
 
-#define LED1_PIN                         GPIO_Pin_13
-#define LED1_GPIO_PORT                   GPIOD
-#define LED1_GPIO_CLK                    RCC_AHB1Periph_GPIOD 
-  
-#define LED2_PIN                         GPIO_Pin_12
-#define LED2_GPIO_PORT                   GPIOD
-#define LED2_GPIO_CLK                    RCC_AHB1Periph_GPIOD 
-  
-#define LED3_PIN                         GPIO_Pin_14
-#define LED3_GPIO_PORT                   GPIOD
-#define LED3_GPIO_CLK                    RCC_AHB1Periph_GPIOD  
-  
-#define LED4_PIN                         GPIO_Pin_15
-#define LED4_GPIO_PORT                   GPIOD
-#define LED4_GPIO_CLK                    RCC_AHB1Periph_GPIOD
+static const uint16_t GPIO_PIN[] = {LED1_PIN, LED2_PIN, LED3_PIN, LED4_PIN};
 
-/** @addtogroup STM324xG_EVAL_LOW_LEVEL_COM
-  * @{
-  */
-#define COMn                             1
+static inline void STM_EVAL_LEDInit(Led_TypeDef Led)
+{
+  GPIO_InitTypeDef  GPIO_InitStructure;
+
+  /* Enable the GPIO_LED Clock */
+  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD, ENABLE);
+
+  /* Configure the GPIO_LED pin */
+  GPIO_InitStructure.GPIO_Pin = LED1_PIN | LED2_PIN | LED3_PIN | LED4_PIN;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_Init(LED_GPIO_PORT, &GPIO_InitStructure);
+}
+
+static inline void STM_EVAL_LEDOn(Led_TypeDef Led) {
+  LED_GPIO_PORT->BSRRL = GPIO_PIN[Led];
+}
+
+static inline void STM_EVAL_LEDOff(Led_TypeDef Led) {
+  LED_GPIO_PORT->BSRRH = GPIO_PIN[Led];
+}
+
+static inline void STM_EVAL_LEDToggle(Led_TypeDef Led) {
+  LED_GPIO_PORT->ODR ^= GPIO_PIN[Led];
+}
 
 /**
  * @brief Definition for COM port1, connected to USART3
@@ -101,7 +115,28 @@ typedef enum
 #define EVAL_COM1_RX_AF                  GPIO_AF_USART3
 #define EVAL_COM1_IRQn                   USART3_IRQn
 
-   
+static inline void STM_EVAL_COMInit(COM_TypeDef COM, USART_InitTypeDef* USART_InitStruct)
+{
+  GPIO_InitTypeDef GPIO_InitStructure;
+
+  RCC_AHB1PeriphClockCmd(EVAL_COM1_TX_GPIO_CLK, ENABLE);
+  RCC_APB1PeriphClockCmd(EVAL_COM1_CLK, ENABLE);
+
+  GPIO_PinAFConfig(EVAL_COM1_TX_GPIO_PORT, EVAL_COM1_TX_SOURCE, EVAL_COM1_TX_AF);
+
+  /* Configure USART Tx as alternate function  */
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+  GPIO_InitStructure.GPIO_Pin = EVAL_COM1_TX_PIN;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_Init(EVAL_COM1_TX_GPIO_PORT, &GPIO_InitStructure);
+
+  USART_Init(EVAL_COM1, USART_InitStruct);
+  USART_Cmd(EVAL_COM1, ENABLE);
+}
+
+
 void STM_EVAL_LEDInit(Led_TypeDef Led);
 void STM_EVAL_LEDOn(Led_TypeDef Led);
 void STM_EVAL_LEDOff(Led_TypeDef Led);

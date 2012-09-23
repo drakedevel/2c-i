@@ -158,8 +158,8 @@
 #define CODEC_I2C_GPIO                 GPIOB
 #define CODEC_I2C_SCL_PIN              GPIO_Pin_6
 #define CODEC_I2C_SDA_PIN              GPIO_Pin_9
-#define CODEC_I2S_SCL_PINSRC           GPIO_PinSource6
-#define CODEC_I2S_SDA_PINSRC           GPIO_PinSource9
+#define CODEC_I2C_SCL_PINSRC           GPIO_PinSource6
+#define CODEC_I2C_SDA_PINSRC           GPIO_PinSource9
 
 /* Maximum Timeout values for flags and events waiting loops. These timeouts are
    not based on accurate values, they just guarantee that the application will 

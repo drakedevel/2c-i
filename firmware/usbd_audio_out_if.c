@@ -52,6 +52,7 @@ AUDIO_FOPS_TypeDef  AUDIO_OUT_fops =
 
 static uint8_t AudioState = AUDIO_STATE_INACTIVE;
 
+extern void writestr(char *c);
 /**
   * @brief  Init
   *         Initialize and configures all required resources for audio play function.
@@ -72,6 +73,7 @@ static uint8_t  Init         (uint32_t AudioFreq,
     /* Call low layer function */
     if (EVAL_AUDIO_Init(OUTPUT_DEVICE_AUTO, Volume, AudioFreq) != 0)
     {
+      writestr("init fail\n");
       AudioState = AUDIO_STATE_ERROR;
       return AUDIO_FAIL;
     }

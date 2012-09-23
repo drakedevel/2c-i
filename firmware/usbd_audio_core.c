@@ -38,6 +38,7 @@
 #include "usbd_audio_out_if.h"
 #include "stm324xg_eval.h"
 
+extern void writestr(char *s);
 /*********************************************
    AUDIO Requests management functions
  *********************************************/
@@ -216,7 +217,7 @@ uint8_t  USB_Class_Init (void  *pdev,
 {  
   /* Open EP OUT */
   DCD_EP_Open(pdev, AUDIO_OUT_EP, AUDIO_OUT_PACKET, USB_OTG_EP_ISOC);
-
+writestr("IN ");
   /* Initialize the Audio output Hardware layer */
   if (AUDIO_OUT_fops.Init(USBD_AUDIO_FREQ, DEFAULT_VOLUME, 0) != USBD_OK)
     return USBD_FAIL;
@@ -257,7 +258,6 @@ uint8_t  USB_Class_DeInit (void  *pdev,
   * @retval status
   */
 
-extern void writestr(char *s);
 uint8_t handle_get_request(void *pdev, USB_SETUP_REQ *req) {
   uint8_t cs = req->wValue >> 8;
   uint8_t cn = req->wValue & 0xFF;
