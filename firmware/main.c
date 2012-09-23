@@ -40,10 +40,22 @@
 
 USB_OTG_CORE_HANDLE           USB_OTG_dev;
 
+USART_InitTypeDef debug = {
+	230400*3, USART_WordLength_8b, USART_StopBits_1, USART_Parity_No, USART_Mode_Tx, USART_HardwareFlowControl_None
+};
+
+void writestr(char *str) {
+	while (*str) {
+		USART_SendData(EVAL_COM1, *str++);
+	}
+}
+
 int main(void)
 {
   __IO uint32_t i = 0;
   SystemInit();
+
+  STM_EVAL_COMInit(COM1, &debug);
 
   STM_EVAL_LEDInit(LED1);
   STM_EVAL_LEDInit(LED2);

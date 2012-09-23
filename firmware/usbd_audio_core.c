@@ -12,50 +12,6 @@
   *           - AudioControl requests management
   *           - Error management
   *           
-  *  @verbatim
-  *      
-  *          ===================================================================      
-  *                                Audio Class Driver Description
-  *          =================================================================== 
-  *           This driver manages the Audio Class 1.0 following the "USB Device Class Definition for
-  *           Audio Devices V1.0 Mar 18, 98".
-  *           This driver implements the following aspects of the specification:
-  *             - Device descriptor management
-  *             - Configuration descriptor management
-  *             - Standard AC Interface Descriptor management
-  *             - 1 Audio Streaming Interface (with single channel, PCM, Stereo mode)
-  *             - 1 Audio Streaming Endpoint
-  *             - 1 Audio Terminal Input (1 channel)
-  *             - Audio Class-Specific AC Interfaces
-  *             - Audio Class-Specific AS Interfaces
-  *             - AudioControl Requests: only SET_CUR and GET_CUR requests are supported (for Mute)
-  *             - Audio Feature Unit (limited to Mute control)
-  *             - Audio Synchronization type: Asynchronous
-  *             - Single fixed audio sampling rate (configurable in usbd_conf.h file)
-  *          
-  *           @note
-  *            The Audio Class 1.0 is based on USB Specification 1.0 and thus supports only
-  *            Low and Full speed modes and does not allow High Speed transfers.
-  *            Please refer to "USB Device Class Definition for Audio Devices V1.0 Mar 18, 98"
-  *            for more details.
-  * 
-  *           These aspects may be enriched or modified for a specific user application.
-  *          
-  *            This driver doesn't implement the following aspects of the specification 
-  *            (but it is possible to manage these features with some modifications on this driver):
-  *             - AudioControl Endpoint management
-  *             - AudioControl requsests other than SET_CUR and GET_CUR
-  *             - Abstraction layer for AudioControl requests (only Mute functionality is managed)
-  *             - Audio Synchronization type: Adaptive
-  *             - Audio Compression modules and interfaces
-  *             - MIDI interfaces and modules
-  *             - Mixer/Selector/Processing/Extension Units (Feature unit is limited to Mute control)
-  *             - Any other application-specific modules
-  *             - Multiple and Variable audio sampling rates
-  *             - Out Streaming Endpoint/Interface (microphone)
-  *      
-  *  @endverbatim
-  *                                  
   ******************************************************************************
   * @attention
   *
@@ -80,20 +36,13 @@
 
 #include "usbd_audio_core.h"
 #include "usbd_audio_out_if.h"
+#include "stm324xg_eval.h"
 
 /*********************************************
    AUDIO Requests management functions
  *********************************************/
-static void AUDIO_Req_GetCurrent(void *pdev, USB_SETUP_REQ *req);
 static void AUDIO_Req_SetCurrent(void *pdev, USB_SETUP_REQ *req);
-/**
-  * @}
-  */ 
 
-/** @defgroup usbd_audio_Private_Variables
-  * @{
-  */ 
-/* Main Buffer for Audio Data Out transfers and its relative pointers */
 uint8_t  IsocOutBuff [TOTAL_OUT_BUF_SIZE * 2];
 uint8_t* IsocOutWrPtr = IsocOutBuff;
 uint8_t* IsocOutRdPtr = IsocOutBuff;
@@ -169,8 +118,8 @@ static uint8_t usbd_audio_CfgDesc[AUDIO_CONFIG_DESC_SIZE] =
   AUDIO_OUT_STREAMING_CTRL,             /* bUnitID */
   0x01,                                 /* bSourceID */
   0x01,                                 /* bControlSize */
-  AUDIO_CONTROL_MUTE,                   /* bmaControls(0) */
-  0x00,                                 /* bmaControls(1) */
+  AUDIO_CONTROL_MUTE | AUDIO_CONTROL_VOLUME,               /* bmaControls(0) */
+  0,       /* bmaControls(1) */
   0x00,                                 /* iTerminal */
   /* 09 byte*/
   
@@ -308,26 +257,83 @@ uint8_t  USB_Class_DeInit (void  *pdev,
   * @param  req: usb requests
   * @retval status
   */
-uint8_t  USB_Class_Setup (void  *pdev, 
-                                  USB_SETUP_REQ *req)
-{
+
+extern void writestr(char *s);
+uint8_t handle_get_request(void *pdev, USB_SETUP_REQ *req) {
+  uint8_t cs = req->wValue >> 8;
+  uint8_t cn = req->wValue & 0xFF;
+
+  STM_EVAL_LEDToggle(LED4);
+  if (cn != 0xFF && cn != 0) {
+    /* Only one channel has controls... */
+  if (cn == 1)  writestr("c1?\n"); 
+  else writestr("bc\n");
+    USBD_CtlError (pdev, req);
+    return USBD_FAIL;
+  }
+
+  if (cs == 0 && req->wLength == 1) {
+    writestr("m\n"); 
+    /* Not muted */
+    AudioCtl[0] = 0;
+    USBD_CtlSendData(pdev, AudioCtl, req->wLength);
+    return USBD_OK;
+  }
+
+  if (cs != 1 || req->wLength != 2) {
+    /* We only reply for the volume control... */
+    writestr("bb\n"); 
+    USBD_CtlError (pdev, req);
+    return USBD_FAIL;
+  }
+
+  if (req->bRequest == AUDIO_REQ_GET_CUR) {
+  STM_EVAL_LEDToggle(LED2);
+    writestr("c\n"); 
+    AudioCtl[0] = 0x15;
+    AudioCtl[1] = 0x15;
+  } else if (req->bRequest == AUDIO_REQ_GET_RES) {
+    writestr("@\n"); 
+    AudioCtl[0] = 0x20;
+    AudioCtl[1] = 0;
+  } else if (req->bRequest == AUDIO_REQ_GET_MIN) {
+    writestr("<\n"); 
+    AudioCtl[0] = 0x12; 
+    AudioCtl[1] = 0x12;
+  STM_EVAL_LEDToggle(LED3);
+  } else if (req->bRequest == AUDIO_REQ_GET_MAX) {
+    writestr(">\n"); 
+    AudioCtl[0] = 0x20;
+    AudioCtl[1] = 0x20;
+  } else {
+    writestr("?!\n"); 
+    USBD_CtlError (pdev, req);
+    return USBD_FAIL;
+  }
+
+  USBD_CtlSendData(pdev, AudioCtl, req->wLength);
+  return USBD_OK;
+}
+
+uint8_t  USB_Class_Setup (void *pdev, USB_SETUP_REQ *req) {
   uint16_t len=USB_AUDIO_DESC_SIZ;
   uint8_t *pbuf=usbd_audio_CfgDesc + 18;
   
-  switch (req->bmRequest & USB_REQ_TYPE_MASK)
-  {
-    /* AUDIO Class Requests -------------------------------*/
+  writestr("cs\n");
+  switch (req->bmRequest & USB_REQ_TYPE_MASK) {
   case USB_REQ_TYPE_CLASS :    
+    /* Audio class requests */
     switch (req->bRequest)
     {
-    case AUDIO_REQ_GET_CUR:
-      AUDIO_Req_GetCurrent(pdev, req);
-      break;
-      
     case AUDIO_REQ_SET_CUR:
       AUDIO_Req_SetCurrent(pdev, req);   
       break;
 
+    case AUDIO_REQ_GET_CUR:
+    case AUDIO_REQ_GET_MIN:
+    case AUDIO_REQ_GET_MAX:
+    case AUDIO_REQ_GET_RES:
+      return handle_get_request(pdev, req);
     default:
       USBD_CtlError (pdev, req);
       return USBD_FAIL;
@@ -515,20 +521,6 @@ uint8_t  USB_Class_IsoOUTIncomplete (void  *pdev)
 /******************************************************************************
      AUDIO Class requests management
 ******************************************************************************/
-/**
-  * @brief  AUDIO_Req_GetCurrent
-  *         Handles the GET_CUR Audio control request.
-  * @param  pdev: instance
-  * @param  req: setup class request
-  * @retval status
-  */
-static void AUDIO_Req_GetCurrent(void *pdev, USB_SETUP_REQ *req)
-{  
-  /* Send the current mute state */
-  USBD_CtlSendData (pdev, 
-                    AudioCtl,
-                    req->wLength);
-}
 
 /**
   * @brief  AUDIO_Req_SetCurrent

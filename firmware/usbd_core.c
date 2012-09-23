@@ -164,8 +164,7 @@ static uint8_t USBD_DataOutStage(USB_OTG_CORE_HANDLE *pdev , uint8_t epnum)
       }
       else
       {
-        if((USB_Class_EP0_RxReady != NULL)&&
-           (pdev->dev.device_status == USB_OTG_CONFIGURED))
+        if(pdev->dev.device_status == USB_OTG_CONFIGURED)
         {
           USB_Class_EP0_RxReady(pdev); 
         }

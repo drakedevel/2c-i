@@ -90,8 +90,6 @@ void PendSV_Handler(void)
   */
 void SysTick_Handler(void)
 {
-  STM_EVAL_LEDToggle(LED4);
-
   if (OutputState != PrevOutput)
   {
     Codec_SwitchOutput(OutputState);

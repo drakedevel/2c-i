@@ -348,7 +348,6 @@ static uint32_t DCD_HandleInEP_ISR(USB_OTG_CORE_HANDLE *pdev)
   diepint.d32 = 0;
   ep_intr = USB_OTG_ReadDevAllInEPItr(pdev);
   
-  STM_EVAL_LEDToggle(LED2);
   while ( ep_intr )
   {
     if (ep_intr&0x1) /* In ITR */
@@ -688,9 +687,6 @@ static uint32_t DCD_HandleEnumDone_ISR(USB_OTG_CORE_HANDLE *pdev)
   
   USB_OTG_EP0Activate(pdev);
 
-  STM_EVAL_LEDToggle(LED3);
-
-  
   /* Set USB turn-around time based on device speed and PHY interface. */
   gusbcfg.d32 = USB_OTG_READ_REG32(&pdev->regs.GREGS->GUSBCFG);
   
