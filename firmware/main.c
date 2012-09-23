@@ -1,6 +1,6 @@
 /**
   ******************************************************************************
-  * @file    app.c
+  * @file   app.c
   * @author  MCD Application Team
   * @version V1.1.0
   * @date    19-March-2012
@@ -25,22 +25,16 @@
   ******************************************************************************
   */ 
 
-/* Includes ------------------------------------------------------------------*/ 
-
-
-
-
 #include "usbd_audio_core.h"
 #include "usbd_usr.h"
 #include "usb_conf.h"
-
 #include "stm324xg_eval.h"
 
-#pragma pack(4) 
+#include <minilib.h>
 
 volatile uint32_t clock = 0;
 
-USB_OTG_CORE_HANDLE           USB_OTG_dev;
+USB_OTG_CORE_HANDLE USB_OTG_dev;
 
 USART_InitTypeDef debug = {
 	230400*3, USART_WordLength_8b, USART_StopBits_1, USART_Parity_No, USART_Mode_Tx, USART_HardwareFlowControl_None
@@ -58,40 +52,40 @@ void writestr(char *str) {
 
 int main(void)
 {
-  __IO uint32_t i = 0;
-  SystemInit();
+	int blip = 0;
 
-  STM_EVAL_COMInit(COM1, &debug);
+	SystemInit();
+	STM_EVAL_COMInit(COM1, &debug);
 
-  if (SysTick_Config(SystemCoreClock / 100)) { 
-    while (1);
-  } 
-  STM_EVAL_LEDInit(LED1);
-  STM_EVAL_LEDInit(LED2);
-  STM_EVAL_LEDInit(LED3);
-  STM_EVAL_LEDInit(LED4);
-  while (clock < 25);
-  STM_EVAL_LEDOn(LED1);
-  while (clock < 50);
-  STM_EVAL_LEDOn(LED3);
-  while (clock < 75);
-  STM_EVAL_LEDOn(LED4);
-  while (clock < 100);
-  STM_EVAL_LEDOn(LED2);
-writestr("Hello!\n");
-writestr("derp\n");
+	if (SysTick_Config(SystemCoreClock / 100)) { 
+		while (1);
+	} 
 
-  USBD_Init(&USB_OTG_dev, USB_OTG_FS_CORE_ID);
+	STM_EVAL_LEDInit(LED1);
+	STM_EVAL_LEDInit(LED2);
+	STM_EVAL_LEDInit(LED3);
+	STM_EVAL_LEDInit(LED4);
+	while (clock < 25);
+	STM_EVAL_LEDOn(LED1);
+	while (clock < 50);
+	STM_EVAL_LEDOn(LED3);
+	while (clock < 75);
+	STM_EVAL_LEDOn(LED4);
+	while (clock < 100);
+	STM_EVAL_LEDOn(LED2);
+	writestr("Hello!\n");
 
-  
-  /* Main loop */
-  while (1)
-  {    
-    if (i++ == 0x100000) {
-      STM_EVAL_LEDToggle(LED1);
-      i = 0;
-    }
-  }
+	USBD_Init(&USB_OTG_dev, USB_OTG_FS_CORE_ID);
+	
+	/* Main loop */
+	while (1) {
+		if (clock % 16 == 0) {
+			if (!blip) {
+				blip = 1;
+				STM_EVAL_LEDToggle(LED1);
+			}
+		} else {
+			blip = 0;
+		}
+	}
 } 
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

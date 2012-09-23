@@ -37,6 +37,7 @@
 #include "usbd_audio_core.h"
 #include "usbd_audio_out_if.h"
 #include "stm324xg_eval.h"
+#include <minilib.h>
 
 extern void writestr(char *s);
 /*********************************************

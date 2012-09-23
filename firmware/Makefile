@@ -4,7 +4,7 @@ BUILDID=`git describe --dirty`
 
 INCLUDES = -I. -Iinc -Iarch/stm32f4
 CFLAGS += -fno-common -mcpu=cortex-m3 -mthumb -O3 -g -fno-unroll-loops -nostdlib -nostdinc -Dassert_param=
-CFLAGS += -Wall -fdata-sections -fshort-enums -Wno-unused -Wno-address -fno-strict-aliasing -funsigned-char
+CFLAGS += -Wall -Werror -fdata-sections -fshort-enums -Wno-unused -Wno-address -fno-strict-aliasing -funsigned-char
 LDFLAGS = -Tarch/stm32f4/stm32f4.lds -mcpu=cortex-m3 -mthumb -fwhole-program -Wl,-Map=2ci.map -nostdlib -nostdinc
 
 INCLUDES += -I../ext/CMSIS/Device/ST/STM32F4xx/Include/

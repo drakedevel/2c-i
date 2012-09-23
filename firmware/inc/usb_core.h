@@ -131,10 +131,7 @@ typedef struct USB_OTG_ep
   uint32_t       total_data_len;
   uint32_t       ctl_data_len;  
 
-}
-
-USB_OTG_EP , *PUSB_OTG_EP;
-
+} USB_OTG_EP;
 
 
 typedef struct USB_OTG_core_cfg
@@ -282,4 +279,18 @@ void         USB_OTG_SetEPStatus (USB_OTG_CORE_HANDLE *pdev , USB_OTG_EP *ep , u
 uint32_t     USB_OTG_GetEPStatus(USB_OTG_CORE_HANDLE *pdev ,USB_OTG_EP *ep);
 #endif
 
+
+static inline USB_OTG_EP *get_endpoint(USB_OTG_CORE_HANDLE *pdev, uint8_t ep_addr) {
+  USB_OTG_EP *ep;
+
+  if (ep_addr & 0x80)
+    ep = &pdev->dev.in_ep[ep_addr & 0x7F];
+  else
+    ep = &pdev->dev.out_ep[ep_addr & 0x7F];
+
+  ep->num = ep_addr & 0x7F;
+  ep->is_in = (0x80 & ep_addr) != 0;
+
+  return ep;
+}
 #endif  /* __USB_CORE_H__ */

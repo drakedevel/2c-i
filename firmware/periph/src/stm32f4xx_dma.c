@@ -191,7 +191,6 @@
   *         to 7 to select the DMA Stream.
   * @retval None
   */
-#define assert_param(x) 
 void DMA_DeInit(DMA_Stream_TypeDef* DMAy_Streamx)
 {
   /* Check the parameters */

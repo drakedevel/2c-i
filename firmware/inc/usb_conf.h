@@ -236,4 +236,6 @@
   #define __packed    __unaligned
 #endif /* __CC_ARM */
 
+#define ALIGNED(x) __attribute__((aligned(x)))
+
 #endif //__USB_CONF__H__

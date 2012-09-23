@@ -32,48 +32,22 @@
 #include "usb_dcd_int.h"
 #include "usb_bsp.h"
 
-static uint8_t USBD_SetupStage(USB_OTG_CORE_HANDLE *pdev);
-static uint8_t USBD_DataOutStage(USB_OTG_CORE_HANDLE *pdev , uint8_t epnum);
-static uint8_t USBD_DataInStage(USB_OTG_CORE_HANDLE *pdev , uint8_t epnum);
-static uint8_t USBD_SOF(USB_OTG_CORE_HANDLE  *pdev);
-static uint8_t USBD_Reset(USB_OTG_CORE_HANDLE  *pdev);
-static uint8_t USBD_Suspend(USB_OTG_CORE_HANDLE  *pdev);
-static uint8_t USBD_Resume(USB_OTG_CORE_HANDLE  *pdev);
+uint8_t USBD_SetupStage(USB_OTG_CORE_HANDLE *pdev);
+uint8_t USBD_DataOutStage(USB_OTG_CORE_HANDLE *pdev , uint8_t epnum);
+uint8_t USBD_DataInStage(USB_OTG_CORE_HANDLE *pdev , uint8_t epnum);
+uint8_t USBD_SOF(USB_OTG_CORE_HANDLE  *pdev);
+uint8_t USBD_Reset(USB_OTG_CORE_HANDLE  *pdev);
+uint8_t USBD_Suspend(USB_OTG_CORE_HANDLE  *pdev);
+uint8_t USBD_Resume(USB_OTG_CORE_HANDLE  *pdev);
 #ifdef VBUS_SENSING_ENABLED
-static uint8_t USBD_DevConnected(USB_OTG_CORE_HANDLE  *pdev);
-static uint8_t USBD_DevDisconnected(USB_OTG_CORE_HANDLE  *pdev);
+uint8_t USBD_DevConnected(USB_OTG_CORE_HANDLE  *pdev);
+uint8_t USBD_DevDisconnected(USB_OTG_CORE_HANDLE  *pdev);
 #endif
-static uint8_t USBD_IsoINIncomplete(USB_OTG_CORE_HANDLE  *pdev);
-static uint8_t USBD_IsoOUTIncomplete(USB_OTG_CORE_HANDLE  *pdev);
-static uint8_t  USBD_RunTestMode (USB_OTG_CORE_HANDLE  *pdev) ;
+uint8_t USBD_IsoINIncomplete(USB_OTG_CORE_HANDLE  *pdev);
+uint8_t USBD_IsoOUTIncomplete(USB_OTG_CORE_HANDLE  *pdev);
+uint8_t  USBD_RunTestMode (USB_OTG_CORE_HANDLE  *pdev) ;
 
 __IO USB_OTG_DCTL_TypeDef SET_TEST_MODE;
-
-USBD_DCD_INT_cb_TypeDef USBD_DCD_INT_cb = 
-{
-  USBD_DataOutStage,
-  USBD_DataInStage,
-  USBD_SetupStage,
-  USBD_SOF,
-  USBD_Reset,
-  USBD_Suspend,
-  USBD_Resume,
-  USBD_IsoINIncomplete,
-  USBD_IsoOUTIncomplete,
-#ifdef VBUS_SENSING_ENABLED
-USBD_DevConnected, 
-USBD_DevDisconnected,    
-#endif  
-};
-
-USBD_DCD_INT_cb_TypeDef  *USBD_DCD_INT_fops = &USBD_DCD_INT_cb;
-/**
-* @}
-*/ 
-
-/** @defgroup USBD_CORE_Private_Functions
-* @{
-*/ 
 
 /**
 * @brief  USBD_Init
@@ -106,7 +80,7 @@ void USBD_Init(USB_OTG_CORE_HANDLE *pdev,
 * @param  pdev: device instance
 * @retval status
 */
-static uint8_t USBD_SetupStage(USB_OTG_CORE_HANDLE *pdev)
+uint8_t USBD_SetupStage(USB_OTG_CORE_HANDLE *pdev)
 {
   USB_SETUP_REQ req;
   
@@ -140,7 +114,7 @@ static uint8_t USBD_SetupStage(USB_OTG_CORE_HANDLE *pdev)
 * @param  epnum: endpoint index
 * @retval status
 */
-static uint8_t USBD_DataOutStage(USB_OTG_CORE_HANDLE *pdev , uint8_t epnum)
+uint8_t USBD_DataOutStage(USB_OTG_CORE_HANDLE *pdev , uint8_t epnum)
 {
   USB_OTG_EP *ep;
   
@@ -187,7 +161,7 @@ static uint8_t USBD_DataOutStage(USB_OTG_CORE_HANDLE *pdev , uint8_t epnum)
 * @param  epnum: endpoint index
 * @retval status
 */
-static uint8_t USBD_DataInStage(USB_OTG_CORE_HANDLE *pdev , uint8_t epnum)
+uint8_t USBD_DataInStage(USB_OTG_CORE_HANDLE *pdev , uint8_t epnum)
 {
   USB_OTG_EP *ep;
   
@@ -252,7 +226,7 @@ static uint8_t USBD_DataInStage(USB_OTG_CORE_HANDLE *pdev , uint8_t epnum)
 * @param  pdev: device instance
 * @retval status
 */
-static uint8_t  USBD_RunTestMode (USB_OTG_CORE_HANDLE  *pdev) 
+uint8_t  USBD_RunTestMode (USB_OTG_CORE_HANDLE  *pdev) 
 {
   USB_OTG_WRITE_REG32(&pdev->regs.DREGS->DCTL, SET_TEST_MODE.d32);
   return USBD_OK;  
@@ -265,7 +239,7 @@ static uint8_t  USBD_RunTestMode (USB_OTG_CORE_HANDLE  *pdev)
 * @retval status
 */
 
-static uint8_t USBD_Reset(USB_OTG_CORE_HANDLE  *pdev)
+uint8_t USBD_Reset(USB_OTG_CORE_HANDLE  *pdev)
 {
   /* Open EP0 OUT */
   DCD_EP_Open(pdev,
@@ -293,7 +267,7 @@ static uint8_t USBD_Reset(USB_OTG_CORE_HANDLE  *pdev)
 * @retval status
 */
 
-static uint8_t USBD_Resume(USB_OTG_CORE_HANDLE  *pdev)
+uint8_t USBD_Resume(USB_OTG_CORE_HANDLE  *pdev)
 {
   /* Upon Resume call usr call back */
   USBD_USR_DeviceResumed(); 
@@ -310,7 +284,7 @@ static uint8_t USBD_Resume(USB_OTG_CORE_HANDLE  *pdev)
 * @retval status
 */
 
-static uint8_t USBD_Suspend(USB_OTG_CORE_HANDLE  *pdev)
+uint8_t USBD_Suspend(USB_OTG_CORE_HANDLE  *pdev)
 {
   pdev->dev.device_old_status = pdev->dev.device_status;
   pdev->dev.device_status  = USB_OTG_SUSPENDED;
@@ -319,22 +293,6 @@ static uint8_t USBD_Suspend(USB_OTG_CORE_HANDLE  *pdev)
   return USBD_OK;
 }
 
-
-/**
-* @brief  USBD_SOF 
-*         Handle SOF event
-* @param  pdev: device instance
-* @retval status
-*/
-
-static uint8_t USBD_SOF(USB_OTG_CORE_HANDLE  *pdev)
-{
-  if(USB_Class_SOF)
-  {
-    USB_Class_SOF(pdev); 
-  }
-  return USBD_OK;
-}
 /**
 * @brief  USBD_SetCfg 
 *        Configure device and start the interface
@@ -371,7 +329,7 @@ USBD_Status USBD_ClrCfg(USB_OTG_CORE_HANDLE  *pdev, uint8_t cfgidx)
 * @param  pdev: device instance
 * @retval status
 */
-static uint8_t USBD_IsoINIncomplete(USB_OTG_CORE_HANDLE  *pdev)
+uint8_t USBD_IsoINIncomplete(USB_OTG_CORE_HANDLE  *pdev)
 {
   USB_Class_IsoINIncomplete(pdev);   
   return USBD_OK;
@@ -383,7 +341,7 @@ static uint8_t USBD_IsoINIncomplete(USB_OTG_CORE_HANDLE  *pdev)
 * @param  pdev: device instance
 * @retval status
 */
-static uint8_t USBD_IsoOUTIncomplete(USB_OTG_CORE_HANDLE  *pdev)
+uint8_t USBD_IsoOUTIncomplete(USB_OTG_CORE_HANDLE  *pdev)
 {
   USB_Class_IsoOUTIncomplete(pdev);   
   return USBD_OK;
@@ -396,7 +354,7 @@ static uint8_t USBD_IsoOUTIncomplete(USB_OTG_CORE_HANDLE  *pdev)
 * @param  pdev: device instance
 * @retval status
 */
-static uint8_t USBD_DevConnected(USB_OTG_CORE_HANDLE  *pdev)
+uint8_t USBD_DevConnected(USB_OTG_CORE_HANDLE  *pdev)
 {
   USBD_USR_DeviceConnected();
   pdev->dev.connection_status = 1;  
@@ -409,7 +367,7 @@ static uint8_t USBD_DevConnected(USB_OTG_CORE_HANDLE  *pdev)
 * @param  pdev: device instance
 * @retval status
 */
-static uint8_t USBD_DevDisconnected(USB_OTG_CORE_HANDLE  *pdev)
+uint8_t USBD_DevDisconnected(USB_OTG_CORE_HANDLE  *pdev)
 {
   USBD_USR_DeviceDisconnected();
   USB_Class_DeInit(pdev, 0);

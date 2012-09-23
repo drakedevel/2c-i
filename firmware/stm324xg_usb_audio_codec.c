@@ -44,8 +44,8 @@
 #include "stm32f4xx_gpio.h"
 #include "stm324xg_eval.h"
 
-/* Private typedef -----------------------------------------------------------*/
-/* Private define ------------------------------------------------------------*/
+
+extern void writestr(char *s);
 
 /* Mask for the bit EN of the I2S CFGR register */
 #define I2S_ENABLE_MASK                 0x0400
