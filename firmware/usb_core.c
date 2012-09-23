@@ -477,18 +477,6 @@ uint8_t USB_OTG_IsDeviceMode(USB_OTG_CORE_HANDLE *pdev)
   return (USB_OTG_GetMode(pdev) != HOST_MODE);
 }
 
-
-/**
-* @brief  USB_OTG_IsHostMode : Check if it is host mode
-* @param  pdev : Selected device
-* @retval num_in_ep
-*/
-uint8_t USB_OTG_IsHostMode(USB_OTG_CORE_HANDLE *pdev)
-{
-  return (USB_OTG_GetMode(pdev) == HOST_MODE);
-}
-
-
 /**
 * @brief  USB_OTG_ReadCoreItr : returns the Core Interrupt register
 * @param  pdev : Selected device
@@ -1345,7 +1333,6 @@ void USB_OTG_UngateClock(USB_OTG_CORE_HANDLE *pdev)
       power.b.gatehclk = 0;
       power.b.stoppclk = 0;
       USB_OTG_WRITE_REG32(pdev->regs.PCGCCTL, power.d32);
-      
     }
   }
 }

@@ -560,22 +560,16 @@ static void USBD_GetConfig(USB_OTG_CORE_HANDLE  *pdev,
   {
     switch (pdev->dev.device_status )  
     {
-    case USB_OTG_ADDRESSED:                     
-      
-      USBD_CtlSendData (pdev, 
-                        (uint8_t *)&USBD_default_cfg,
-                        1);
+    case USB_OTG_ADDRESSED:
+      USBD_CtlSendData (pdev, (uint8_t *)&USBD_default_cfg, 1);
       break;
       
-    case USB_OTG_CONFIGURED:                   
-      
-      USBD_CtlSendData (pdev, 
-                        &pdev->dev.device_config,
-                        1);
+    case USB_OTG_CONFIGURED:
+      USBD_CtlSendData (pdev, &pdev->dev.device_config, 1);
       break;
       
     default:
-       USBD_CtlError(pdev, req);
+      USBD_CtlError(pdev, req);
       break;
     }
   }

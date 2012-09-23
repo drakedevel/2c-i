@@ -966,9 +966,6 @@ static void Codec_AudioInterface_Init(uint32_t AudioFreq)
 
   /* Enable the I2S DMA TX request */
   SPI_I2S_DMACmd(CODEC_I2S, SPI_I2S_DMAReq_Tx, ENABLE);
-
-  /* The I2S peripheral will be enabled only in the EVAL_AUDIO_Play() function 
-       or by user functions if DMA mode not enabled */  
 }
 
 /**
@@ -1186,10 +1183,6 @@ void Audio_MAL_DeInit(void)
   
   /* Dinitialize the DMA Stream */
   DMA_DeInit(AUDIO_MAL_DMA_STREAM);
-  
-  /* 
-     The DMA clock is not disabled, since it can be used by other streams 
-                                                                          */ 
 }
 
 /**
