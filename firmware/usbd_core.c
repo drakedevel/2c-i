@@ -86,7 +86,6 @@ USBD_DCD_INT_cb_TypeDef  *USBD_DCD_INT_fops = &USBD_DCD_INT_cb;
 */
 void USBD_Init(USB_OTG_CORE_HANDLE *pdev,
                USB_OTG_CORE_ID_TypeDef coreID,
-               USBD_DEVICE *pDevice,                  
                USBD_Class_cb_TypeDef *class_cb, 
                USBD_Usr_cb_TypeDef *usr_cb)
 {
@@ -96,7 +95,6 @@ void USBD_Init(USB_OTG_CORE_HANDLE *pdev,
   /*Register class and user callbacks */
   pdev->dev.class_cb = class_cb;
   pdev->dev.usr_cb = usr_cb;  
-  pdev->dev.usr_device = pDevice;    
   
   /* set USB OTG core params */
   DCD_Init(pdev , coreID);

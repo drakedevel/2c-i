@@ -42,7 +42,6 @@ typedef enum {
 
 void USBD_Init(USB_OTG_CORE_HANDLE *pdev,
                USB_OTG_CORE_ID_TypeDef coreID, 
-               USBD_DEVICE *pDevice,                  
                USBD_Class_cb_TypeDef *class_cb, 
                USBD_Usr_cb_TypeDef *usr_cb);
 

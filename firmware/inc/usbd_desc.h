@@ -82,7 +82,6 @@ extern  uint8_t USBD_StrDesc[USB_MAX_STR_DESC_SIZ];
 extern  uint8_t USBD_OtherSpeedCfgDesc[USB_LEN_CFG_DESC]; 
 extern  uint8_t USBD_DeviceQualifierDesc[USB_LEN_DEV_QUALIFIER_DESC];
 extern  uint8_t USBD_LangIDDesc[USB_SIZ_STRING_LANGID];
-extern  USBD_DEVICE USR_desc; 
 /**
   * @}
   */ 

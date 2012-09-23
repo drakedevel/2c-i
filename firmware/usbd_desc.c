@@ -32,29 +32,6 @@
 #include "usbd_conf.h"
 #include "usb_regs.h"
 
-/** @addtogroup STM32_USB_OTG_DEVICE_LIBRARY
-  * @{
-  */
-
-
-/** @defgroup USBD_DESC 
-  * @brief USBD descriptors module
-  * @{
-  */ 
-
-/** @defgroup USBD_DESC_Private_TypesDefinitions
-  * @{
-  */ 
-/**
-  * @}
-  */ 
-
-
-/** @defgroup USBD_DESC_Private_Defines
-  * @{
-  */ 
-
-
 #define USBD_VID                        0x0483
 
 #ifdef STM32F2XX
@@ -91,23 +68,6 @@
 /**
   * @}
   */ 
-
-
-/** @defgroup USBD_DESC_Private_Variables
-  * @{
-  */ 
-
-USBD_DEVICE USR_desc =
-{
-  USBD_USR_DeviceDescriptor,
-  USBD_USR_LangIDStrDescriptor, 
-  USBD_USR_ManufacturerStrDescriptor,
-  USBD_USR_ProductStrDescriptor,
-  USBD_USR_SerialStrDescriptor,
-  USBD_USR_ConfigStrDescriptor,
-  USBD_USR_InterfaceStrDescriptor,
-  
-};
 
 
 #ifdef USB_OTG_HS_INTERNAL_DMA_ENABLED

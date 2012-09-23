@@ -153,8 +153,6 @@ typedef struct USB_OTG_core_cfg
 }
 USB_OTG_CORE_CFGS, *PUSB_OTG_CORE_CFGS;
 
-
-
 typedef  struct  usb_setup_req {
     
     uint8_t   bmRequest;                      
@@ -163,27 +161,6 @@ typedef  struct  usb_setup_req {
     uint16_t  wIndex;                             
     uint16_t  wLength;                            
 } USB_SETUP_REQ;
-
-typedef struct _Device_TypeDef
-{
-  uint8_t  *(*GetDeviceDescriptor)( uint8_t speed , uint16_t *length);  
-  uint8_t  *(*GetLangIDStrDescriptor)( uint8_t speed , uint16_t *length); 
-  uint8_t  *(*GetManufacturerStrDescriptor)( uint8_t speed , uint16_t *length);  
-  uint8_t  *(*GetProductStrDescriptor)( uint8_t speed , uint16_t *length);  
-  uint8_t  *(*GetSerialStrDescriptor)( uint8_t speed , uint16_t *length);  
-  uint8_t  *(*GetConfigurationStrDescriptor)( uint8_t speed , uint16_t *length);  
-  uint8_t  *(*GetInterfaceStrDescriptor)( uint8_t speed , uint16_t *length);   
-} USBD_DEVICE, *pUSBD_DEVICE;
-
-//typedef struct USB_OTG_hPort
-//{
-//  void (*Disconnect) (void *phost);
-//  void (*Connect) (void *phost); 
-//  uint8_t ConnStatus;
-//  uint8_t DisconnStatus;
-//  uint8_t ConnHandled;
-//  uint8_t DisconnHandled;
-//} USB_OTG_hPort_TypeDef;
 
 typedef struct _Device_cb
 {
@@ -210,8 +187,6 @@ typedef struct _Device_cb
 #endif  
   
 } USBD_Class_cb_TypeDef;
-
-
 
 typedef struct _USBD_USR_PROP
 {
@@ -242,7 +217,7 @@ typedef struct _DCD
   uint8_t        setup_packet [8*3];
   USBD_Class_cb_TypeDef         *class_cb;
   USBD_Usr_cb_TypeDef           *usr_cb;
-  USBD_DEVICE                   *usr_device;  
+  //USBD_DEVICE                   *usr_device;  
   uint8_t        *pConfig_descriptor;
  }
 DCD_DEV , *DCD_PDEV;
@@ -279,31 +254,6 @@ typedef struct USB_OTG_handle
 }
 USB_OTG_CORE_HANDLE;
 
-/**
-  * @}
-  */ 
-
-
-/** @defgroup USB_CORE_Exported_Macros
-  * @{
-  */ 
-
-/**
-  * @}
-  */ 
-
-/** @defgroup USB_CORE_Exported_Variables
-  * @{
-  */ 
-/**
-  * @}
-  */ 
-
-/** @defgroup USB_CORE_Exported_FunctionsPrototype
-  * @{
-  */ 
-
-
 USB_OTG_STS  USB_OTG_CoreInit        (USB_OTG_CORE_HANDLE *pdev);
 USB_OTG_STS  USB_OTG_SelectCore      (USB_OTG_CORE_HANDLE *pdev, 
                                       USB_OTG_CORE_ID_TypeDef coreID);
@@ -327,7 +277,6 @@ uint32_t     USB_OTG_GetMode         (USB_OTG_CORE_HANDLE *pdev);
 USB_OTG_STS  USB_OTG_PhyInit         (USB_OTG_CORE_HANDLE *pdev);
 USB_OTG_STS  USB_OTG_SetDeviceMode  (USB_OTG_CORE_HANDLE *pdev);
 
-/********************* DEVICE APIs ********************************************/
 #ifdef USE_DEVICE_MODE
 USB_OTG_STS  USB_OTG_CoreInitDev         (USB_OTG_CORE_HANDLE *pdev);
 USB_OTG_STS  USB_OTG_EnableDevInt        (USB_OTG_CORE_HANDLE *pdev);
@@ -352,19 +301,5 @@ void         USB_OTG_StopDevice(USB_OTG_CORE_HANDLE *pdev);
 void         USB_OTG_SetEPStatus (USB_OTG_CORE_HANDLE *pdev , USB_OTG_EP *ep , uint32_t Status);
 uint32_t     USB_OTG_GetEPStatus(USB_OTG_CORE_HANDLE *pdev ,USB_OTG_EP *ep);
 #endif
-/**
-  * @}
-  */ 
 
 #endif  /* __USB_CORE_H__ */
-
-
-/**
-  * @}
-  */ 
-
-/**
-  * @}
-  */ 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
-

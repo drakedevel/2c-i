@@ -373,7 +373,7 @@ static void USBD_GetDescriptor(USB_OTG_CORE_HANDLE  *pdev,
   switch (req->wValue >> 8)
   {
   case USB_DESC_TYPE_DEVICE:
-    pbuf = pdev->dev.usr_device->GetDeviceDescriptor(pdev->cfg.speed, &len);
+    pbuf = USBD_USR_DeviceDescriptor(pdev->cfg.speed, &len);
     if ((req->wLength == 64) ||( pdev->dev.device_status == USB_OTG_DEFAULT))  
     {                  
       len = 8;
@@ -397,27 +397,27 @@ static void USBD_GetDescriptor(USB_OTG_CORE_HANDLE  *pdev,
     switch ((uint8_t)(req->wValue))
     {
     case USBD_IDX_LANGID_STR:
-     pbuf = pdev->dev.usr_device->GetLangIDStrDescriptor(pdev->cfg.speed, &len);        
+     pbuf = USBD_USR_LangIDStrDescriptor(pdev->cfg.speed, &len);        
       break;
       
     case USBD_IDX_MFC_STR:
-      pbuf = pdev->dev.usr_device->GetManufacturerStrDescriptor(pdev->cfg.speed, &len);
+      pbuf = USBD_USR_ManufacturerStrDescriptor(pdev->cfg.speed, &len);
       break;
       
     case USBD_IDX_PRODUCT_STR:
-      pbuf = pdev->dev.usr_device->GetProductStrDescriptor(pdev->cfg.speed, &len);
+      pbuf = USBD_USR_ProductStrDescriptor(pdev->cfg.speed, &len);
       break;
       
     case USBD_IDX_SERIAL_STR:
-      pbuf = pdev->dev.usr_device->GetSerialStrDescriptor(pdev->cfg.speed, &len);
+      pbuf = USBD_USR_SerialStrDescriptor(pdev->cfg.speed, &len);
       break;
       
     case USBD_IDX_CONFIG_STR:
-      pbuf = pdev->dev.usr_device->GetConfigurationStrDescriptor(pdev->cfg.speed, &len);
+      pbuf = USBD_USR_ConfigStrDescriptor(pdev->cfg.speed, &len);
       break;
       
     case USBD_IDX_INTERFACE_STR:
-      pbuf = pdev->dev.usr_device->GetInterfaceStrDescriptor(pdev->cfg.speed, &len);
+      pbuf = USBD_USR_InterfaceStrDescriptor(pdev->cfg.speed, &len);
       break;
       
     default:
