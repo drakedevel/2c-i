@@ -34,23 +34,6 @@
 #include "usbd_req.h"
 #include "usbd_desc.h"
 
-
-
-
-/** @addtogroup STM32_USB_OTG_DEVICE_LIBRARY
-  * @{
-  */
-  
-/** @defgroup usbd_audio
-  * @brief This file is the Header file for USBD_audio.c
-  * @{
-  */ 
-
-
-/** @defgroup usbd_audio_Exported_Defines
-  * @{
-  */ 
-
 /* AudioFreq * DataSize (2 bytes) * NumChannels (Stereo: 2) */
 #define AUDIO_OUT_PACKET                              (uint32_t)(((USBD_AUDIO_FREQ * 2 * 2) /1000)) 
 
@@ -101,14 +84,6 @@
 
 #define AUDIO_OUT_STREAMING_CTRL                      0x02
 
-/**
-  * @}
-  */ 
-
-
-/** @defgroup USBD_CORE_Exported_TypesDefinitions
-  * @{
-  */
 typedef struct _Audio_Fops
 {
     uint8_t  (*Init)         (uint32_t  AudioFreq, uint32_t Volume, uint32_t options);
@@ -119,20 +94,9 @@ typedef struct _Audio_Fops
     uint8_t  (*PeriodicTC)   (uint8_t cmd);
     uint8_t  (*GetState)     (void);
 }AUDIO_FOPS_TypeDef;
-/**
-  * @}
-  */ 
 
-
-
-/** @defgroup USBD_CORE_Exported_Macros
-  * @{
-  */ 
 #define AUDIO_PACKET_SZE(frq)          (uint8_t)(((frq * 2 * 2)/1000) & 0xFF), \
                                        (uint8_t)((((frq * 2 * 2)/1000) >> 8) & 0xFF)
 #define SAMPLE_FREQ(frq)               (uint8_t)(frq), (uint8_t)((frq >> 8)), (uint8_t)((frq >> 16))
-/**
-  * @}
-  */ 
 
 #endif  // __USB_AUDIO_CORE_H_

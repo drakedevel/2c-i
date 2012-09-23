@@ -107,26 +107,6 @@ uint8_t  AudioCtlUnit = 0;
 static uint32_t PlayFlag = 0;
 
 static __IO uint32_t  usbd_audio_AltSet = 0;
-static uint8_t usbd_audio_CfgDesc[AUDIO_CONFIG_DESC_SIZE];
-
-#if 0
-/* AUDIO interface class callbacks structure */
-USBD_Class_cb_TypeDef  AUDIO_cb = 
-{
-  USB_Class_Init,
-  USB_Class_DeInit,
-  USB_Class_Setup,
-  NULL, /* EP0_TxSent */
-  USB_Class_EP0_RxReady,
-  USB_Class_DataIn,
-  USB_Class_DataOut,
-  USB_Class_SOF,
-  NULL,
-  USB_Class_IsoOUTIncomplete,   
-  USB_Class_GetConfigDescriptor,
-  USB_Class_GetConfigDescriptor, /* use same config as per FS */
-};
-#endif
 
 /* USB AUDIO device Configuration Descriptor */
 static uint8_t usbd_audio_CfgDesc[AUDIO_CONFIG_DESC_SIZE] =
@@ -277,14 +257,6 @@ static uint8_t usbd_audio_CfgDesc[AUDIO_CONFIG_DESC_SIZE] =
 } ;
 
 /**
-  * @}
-  */ 
-
-/** @defgroup usbd_audio_Private_Functions
-  * @{
-  */ 
-
-/**
 * @brief  USB_Class_Init
 *         Initilaizes the AUDIO interface.
 * @param  pdev: device instance
@@ -295,22 +267,15 @@ uint8_t  USB_Class_Init (void  *pdev,
                                  uint8_t cfgidx)
 {  
   /* Open EP OUT */
-  DCD_EP_Open(pdev,
-              AUDIO_OUT_EP,
-              AUDIO_OUT_PACKET,
-              USB_OTG_EP_ISOC);
+  DCD_EP_Open(pdev, AUDIO_OUT_EP, AUDIO_OUT_PACKET, USB_OTG_EP_ISOC);
 
   /* Initialize the Audio output Hardware layer */
   if (AUDIO_OUT_fops.Init(USBD_AUDIO_FREQ, DEFAULT_VOLUME, 0) != USBD_OK)
-  {
     return USBD_FAIL;
-  }
-    
+ 
   /* Prepare Out endpoint to receive audio data */
-  DCD_EP_PrepareRx(pdev,
-                   AUDIO_OUT_EP,
-                   (uint8_t*)IsocOutBuff,                        
-                   AUDIO_OUT_PACKET);  
+  DCD_EP_PrepareRx(pdev, AUDIO_OUT_EP,
+                   (uint8_t*)IsocOutBuff, AUDIO_OUT_PACKET);  
   
   return USBD_OK;
 }
@@ -347,7 +312,7 @@ uint8_t  USB_Class_Setup (void  *pdev,
                                   USB_SETUP_REQ *req)
 {
   uint16_t len=USB_AUDIO_DESC_SIZ;
-  uint8_t  *pbuf=usbd_audio_CfgDesc + 18;
+  uint8_t *pbuf=usbd_audio_CfgDesc + 18;
   
   switch (req->bmRequest & USB_REQ_TYPE_MASK)
   {
@@ -384,15 +349,11 @@ uint8_t  USB_Class_Setup (void  *pdev,
         len = MIN(USB_AUDIO_DESC_SIZ , req->wLength);
       }
       
-      USBD_CtlSendData (pdev, 
-                        pbuf,
-                        len);
+      USBD_CtlSendData (pdev, pbuf, len);
       break;
       
     case USB_REQ_GET_INTERFACE :
-      USBD_CtlSendData (pdev,
-                        (uint8_t *)&usbd_audio_AltSet,
-                        1);
+      USBD_CtlSendData (pdev, (uint8_t *)&usbd_audio_AltSet, 1);
       break;
       
     case USB_REQ_SET_INTERFACE :
