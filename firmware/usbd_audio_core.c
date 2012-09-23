@@ -213,19 +213,17 @@ static uint8_t usbd_audio_CfgDesc[AUDIO_CONFIG_DESC_SIZE] =
 * @param  cfgidx: Configuration index
 * @retval status
 */
-uint8_t  USB_Class_Init (void  *pdev, 
-                                 uint8_t cfgidx)
+uint8_t  USB_Class_Init (void *pdev, uint8_t cfgidx)
 {  
   /* Open EP OUT */
   DCD_EP_Open(pdev, AUDIO_OUT_EP, AUDIO_OUT_PACKET, USB_OTG_EP_ISOC);
-writestr("IN ");
+
   /* Initialize the Audio output Hardware layer */
   if (AUDIO_OUT_fops.Init(USBD_AUDIO_FREQ, DEFAULT_VOLUME, 0) != USBD_OK)
     return USBD_FAIL;
  
   /* Prepare Out endpoint to receive audio data */
-  DCD_EP_PrepareRx(pdev, AUDIO_OUT_EP,
-                   (uint8_t*)IsocOutBuff, AUDIO_OUT_PACKET);  
+  DCD_EP_PrepareRx(pdev, AUDIO_OUT_EP, (uint8_t*)IsocOutBuff, AUDIO_OUT_PACKET);  
   
   return USBD_OK;
 }
@@ -237,16 +235,13 @@ writestr("IN ");
 * @param  cfgidx: Configuration index
 * @retval status
 */
-uint8_t  USB_Class_DeInit (void  *pdev, 
-                                   uint8_t cfgidx)
+uint8_t  USB_Class_DeInit (void *pdev, uint8_t cfgidx)
 { 
-  DCD_EP_Close (pdev , AUDIO_OUT_EP);
+  DCD_EP_Close (pdev, AUDIO_OUT_EP);
   
   /* DeInitialize the Audio output Hardware layer */
   if (AUDIO_OUT_fops.DeInit(0) != USBD_OK)
-  {
     return USBD_FAIL;
-  }
   
   return USBD_OK;
 }
@@ -413,6 +408,7 @@ uint8_t  USB_Class_EP0_RxReady (void  *pdev)
     btohex(c + 3, AudioCtl[0]);
     c[5] = ' ';
     c[6] = 0;
+    writestr(c);
   }
 
   AudioCtlCmd = 0;

@@ -80,7 +80,6 @@ void DCD_Init(USB_OTG_CORE_HANDLE *pdev ,
   /* Init Device */
   USB_OTG_CoreInitDev(pdev);
   
-  
   /* Enable USB Global interrupt */
   USB_OTG_EnableGlobalInt(pdev);
 }
@@ -125,9 +124,6 @@ uint32_t DCD_EP_Open(USB_OTG_CORE_HANDLE *pdev ,
   USB_OTG_EPActivate(pdev , ep );
   return 0;
 }
-
-
-
 
 /**
 * @brief  called when an EP is disabled
