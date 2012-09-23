@@ -123,7 +123,7 @@ Infinite_Loop:
 * 0x0000.0000.
 * 
 *******************************************************************************/
-   .section  .isr_vector,"a",%progbits
+   .section  .cs3.interrupt_vector,"a",%progbits
   .type  __cs3_interrupt_vector_cortex_m, %object
   .size  __cs3_interrupt_vector_cortex_m, .-__cs3_interrupt_vector_cortex_m
     
